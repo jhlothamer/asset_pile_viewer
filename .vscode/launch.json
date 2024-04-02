@@ -1,0 +1,35 @@
+{
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Asset Pile Viewer",
+			"cwd": "asset_pile_viewer_app",
+			"request": "launch",
+			"type": "dart",
+			"noDebug": true,
+		},
+		{
+			"name": "Asset Pile Viewer (debug)",
+			"cwd": "asset_pile_viewer_app",
+			"request": "launch",
+			"type": "dart",
+		},
+		{
+			"name": "Asset Pile Viewer (profile mode)",
+			"cwd": "asset_pile_viewer_app",
+			"request": "launch",
+			"type": "dart",
+			"flutterMode": "profile"
+		},
+		{
+			"name": "Asset Pile Viewer (release mode)",
+			"cwd": "asset_pile_viewer_app",
+			"request": "launch",
+			"type": "dart",
+			"flutterMode": "release"
+		}
+	]
+}

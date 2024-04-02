@@ -1,0 +1,187 @@
+import 'dart:io';
+
+import 'package:assetPileViewer/common/util/string_extensions.dart';
+import 'package:assetPileViewer/common/widgets/images.dart';
+import 'package:assetPileViewer/common/widgets/keyword_edit.dart';
+import 'package:assetPileViewer/common/widgets/open_file_explorer_button.dart';
+import 'package:assetPileViewer/features/folder_view/file_details/audio_file_details.dart';
+import 'package:assetPileViewer/features/folder_view/providers/asset_files_provider.dart';
+import 'package:assetPileViewer/features/folder_view/providers/asset_root_folder_provider.dart';
+import 'package:assetPileViewer/features/folder_view/providers/keywords_provider.dart';
+import 'package:assetPileViewer/features/folder_view/providers/selected_file_provider.dart';
+import 'package:assetPileViewer/models/models.dart';
+import 'package:easy_image_viewer/easy_image_viewer.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_size_getter/file_input.dart';
+import 'package:image_size_getter/image_size_getter.dart';
+
+class FileDetailDisplay extends ConsumerStatefulWidget {
+  const FileDetailDisplay({super.key});
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _FileDetailDisplayState();
+}
+
+class _FileDetailDisplayState extends ConsumerState<FileDetailDisplay> {
+  @override
+  Widget build(BuildContext context) {
+    final assetRootFolder = ref.watch(assetRootFolderProvider);
+    final selectedFilePath = ref.watch(selectedFileProvider);
+
+    if (selectedFilePath.isEmpty) {
+      return const Center(
+        child: Text('Please select a file'),
+      );
+    }
+
+    final fileType = selectedFilePath.getFileType();
+    final fileName = selectedFilePath.fileName();
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                'Selected File:',
+                style: Theme.of(context).textTheme.labelSmall,
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Flexible(
+                child: Tooltip(
+                  message: fileName,
+                  child: Text(
+                    fileName,
+                    style: Theme.of(context).textTheme.headlineSmall,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+              OpenFileExplorerButton(path: selectedFilePath)
+            ],
+          ),
+          const Divider(),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  ..._getDetails(selectedFilePath, assetRootFolder),
+                  if (fileType == FileType.texture)
+                    ..._getTextureDetails(context, selectedFilePath),
+                  if (fileType == FileType.sound)
+                    ..._getSoundDetails(selectedFilePath),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _getDetails(String selectedFilePath, String assetRootFolder) {
+    final assetFile = ref.watch(assetFilesProvider)[selectedFilePath] ??
+        AssetFile.newFile(selectedFilePath);
+    final relativeFilepath =
+        selectedFilePath.replaceAll(assetRootFolder, '').justPath();
+
+    return [
+      Row(
+        children: [
+          Text(
+            'In folder:',
+            style: Theme.of(context).textTheme.labelSmall,
+          ),
+        ],
+      ),
+      Row(
+        children: [
+          Flexible(
+            child: Tooltip(
+              message: relativeFilepath,
+              child: Text(
+                relativeFilepath,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
+          OpenFileExplorerButton(path: selectedFilePath.justPath()),
+        ],
+      ),
+      const Row(
+        children: [
+          Text(
+            'keywords:',
+          ),
+        ],
+      ),
+      KeywordEdit(
+        controller: KeywordEditorController(
+          assetFile.keywords.map((e) => e.name).toList(),
+        ),
+        onKeywordsAdded: (newKeywords) {
+          final savedKeywords = ref.read(keywordsProvider.notifier).saveAll(
+              newKeywords.map((e) => Keyword.newKeyword(name: e)).toList());
+          final updatedKeywords = [...assetFile.keywords, ...savedKeywords];
+
+          ref
+              .read(assetFilesProvider.notifier)
+              .updateKeywords(selectedFilePath, updatedKeywords);
+        },
+        onKeywordDeleted: (deletedKeyword) {
+          //assetFile.keywords.removeWhere((e) => e.name == deletedKeyword);
+          final updatedKeywords = assetFile.keywords
+              .where((k) => k.name != deletedKeyword)
+              .toList();
+          ref
+              .read(assetFilesProvider.notifier)
+              .updateKeywords(selectedFilePath, updatedKeywords);
+        },
+      ),
+    ];
+  }
+
+  List<Widget> _getTextureDetails(
+      BuildContext context, String selectedFilePath) {
+    final isSvg = selectedFilePath.extension().toLowerCase() == 'svg';
+
+    Size? size;
+    Image? img;
+    if (!isSvg) {
+      try {
+        final imageFile = File(selectedFilePath);
+        size = ImageSizeGetter.getSize(FileInput(imageFile));
+      } catch (e) {
+        //ignore
+      }
+    }
+
+    img = getImage(context, selectedFilePath);
+
+    return [
+      const SizedBox(height: 8),
+      GestureDetector(
+        onTap: () {
+          showImageViewer(context, img!.image);
+        },
+        child: img,
+      ),
+      if (size != null) Text('size ${size.width}x${size.height}'),
+    ];
+  }
+
+  List<Widget> _getSoundDetails(String selectedFilePath) {
+    return [
+      const SizedBox(height: 8),
+      AudioFileDetails(filePath: selectedFilePath),
+    ];
+  }
+}
