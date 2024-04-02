@@ -1,4 +1,6 @@
+import 'package:assetPileViewer/common/widgets/open_file_explorer_button.dart';
 import 'package:assetPileViewer/data/asset_pile_viewer_db_schema.dart';
+import 'package:assetPileViewer/data/db_util.dart';
 import 'package:flutter/material.dart';
 
 class UnsupportedDbVersionPage extends StatelessWidget {
@@ -23,6 +25,7 @@ class UnsupportedDbVersionPage extends StatelessWidget {
               'DB Version expected: $currentSchemaVersion',
               style: Theme.of(context).textTheme.headlineLarge,
             ),
+            OpenFileExplorerButton(path: dbFilepath),
           ],
         ),
       ),

@@ -24,7 +24,8 @@ class OpenFileExplorerButton extends StatelessWidget {
         }
 
         final workingDir =
-            path.getFileType() == FileType.unknown ? path : path.justPath();
+            FileSystemEntity.isDirectorySync(path) ? path : path.justPath();
+
         final results = await Process.run(
             fileExplorer,
             [

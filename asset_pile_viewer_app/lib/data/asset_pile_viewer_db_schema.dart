@@ -6,21 +6,20 @@ import 'package:sqlite3/sqlite3.dart';
 class VersionInfo {
   final int major;
   final int minor;
-  final int revision;
+  final int patch;
 
-  VersionInfo(
-      {required this.major, required this.minor, required this.revision});
+  VersionInfo({required this.major, required this.minor, required this.patch});
 
   factory VersionInfo.fromString(String versionString) {
     final versionParts = versionString.split('.');
     return VersionInfo(
         major: int.parse(versionParts[0]),
         minor: int.parse(versionParts[1]),
-        revision: int.parse(versionParts[2]));
+        patch: int.parse(versionParts[2]));
   }
 
   @override
-  String toString() => '$major.$minor.$revision';
+  String toString() => '$major.$minor.$patch';
 
   //@override
   bool operator >(VersionInfo other) {
@@ -28,7 +27,7 @@ class VersionInfo {
         ? true
         : minor > other.minor
             ? true
-            : revision > other.revision
+            : patch > other.patch
                 ? true
                 : false;
     debugPrint('VersionInfo:operator > - checking $this > $other - $result');
@@ -36,7 +35,7 @@ class VersionInfo {
   }
 }
 
-final currentSchemaVersion = VersionInfo(major: 1, minor: 0, revision: 0);
+final currentSchemaVersion = VersionInfo(major: 0, minor: 1, patch: 0);
 VersionInfo? foundSchemaVersion;
 bool dbSchemaVersionUnsupported = false;
 
@@ -83,10 +82,10 @@ class AssetPileViewerDbSchema {
     }
   }
 
-  void _ensureSchemaVersion1_0_0(Database db, List<String> allTableNames) {
+  void _ensureSchemaVersion0_1_0(Database db, List<String> allTableNames) {
     final currentDbVersion =
         allTableNames.contains('db_version_history') ? _getDbVersion(db) : '';
-    if (currentDbVersion == '1.0.0') {
+    if (currentDbVersion == '0.1.0') {
       return;
     }
     _ensureTables(
@@ -133,7 +132,7 @@ class AssetPileViewerDbSchema {
       },
     );
 
-    _insertDbVersion(db, '1.0.0');
+    _insertDbVersion(db, '0.1.0');
   }
 
   bool _isDbNewerVersion(Database db, List<String> allTableNames) {
@@ -164,7 +163,7 @@ class AssetPileViewerDbSchema {
       return;
     }
 
-    _ensureSchemaVersion1_0_0(db, allTableNames);
+    _ensureSchemaVersion0_1_0(db, allTableNames);
   }
 
   //recreates db file with schema. WARNING!  EXISTING DATA LOST!
