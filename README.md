@@ -20,9 +20,7 @@ The following file formats are currently supported:
 There are issues with full support for the following file formats.
 
   * ogg - will not play on Windows
-  * svg - svg files must contain the following attributes or will appear 
-
-blank: viewBox or width and height
+  * svg - svg files must contain the following attributes or will appear blank: viewBox or width and height
 
 ## Feature Road Map
 
