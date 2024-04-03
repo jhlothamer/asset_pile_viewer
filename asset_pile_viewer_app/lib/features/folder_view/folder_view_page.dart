@@ -1,4 +1,5 @@
 import 'package:assetPileViewer/common/widgets/audioplayer_controls.dart';
+import 'package:assetPileViewer/features/about/about.dart';
 import 'package:assetPileViewer/features/folder_view/file_filter/file_filter.dart';
 import 'package:assetPileViewer/features/folder_view/file_grid_view/file_grid_view.dart';
 import 'package:assetPileViewer/features/folder_view/file_details/file_detail_display.dart';
@@ -27,60 +28,74 @@ class _FolderViewPageState extends State<FolderViewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SplitView(
-        indicator: SplitIndicator(
-          isActive: true,
-          viewMode: SplitViewMode.Horizontal,
-          color: Theme.of(context).colorScheme.background,
-        ),
-        controller: SplitViewController(
-          weights: [.3, null],
-          limits: [WeightLimit(min: .2, max: .6), null],
-        ),
-        viewMode: SplitViewMode.Horizontal,
+      body: Stack(
         children: [
-          const FolderView(),
-          Flex(
-            direction: Axis.vertical,
+          SplitView(
+            indicator: SplitIndicator(
+              isActive: true,
+              viewMode: SplitViewMode.Horizontal,
+              color: Theme.of(context).colorScheme.background,
+            ),
+            controller: SplitViewController(
+              weights: [.3, null],
+              limits: [WeightLimit(min: .2, max: .6), null],
+            ),
+            viewMode: SplitViewMode.Horizontal,
             children: [
-              //filter stand in
+              const FolderView(),
               Flex(
-                direction: Axis.horizontal,
+                direction: Axis.vertical,
                 children: [
-                  const Expanded(
-                    flex: 3,
-                    child: FileFilter(),
+                  //filter stand in
+                  Flex(
+                    direction: Axis.horizontal,
+                    children: [
+                      const Expanded(
+                        flex: 3,
+                        child: FileFilter(),
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: AudioPlayerControls(player: _audioPlayer),
+                      ),
+                    ],
                   ),
+                  const Divider(
+                    height: 4,
+                  ),
+                  //grid view and details
                   Expanded(
-                    flex: 1,
-                    child: AudioPlayerControls(player: _audioPlayer),
-                  ),
+                    child: SplitView(
+                        indicator: SplitIndicator(
+                          isActive: true,
+                          viewMode: SplitViewMode.Horizontal,
+                          color: Theme.of(context).colorScheme.background,
+                        ),
+                        viewMode: SplitViewMode.Horizontal,
+                        controller: SplitViewController(
+                          weights: [.6, null],
+                          limits: [WeightLimit(min: .4, max: .8)],
+                        ),
+                        children: [
+                          FileGridView(
+                            audioPlayer: _audioPlayer,
+                          ),
+                          const FileDetailDisplay(),
+                        ]),
+                  )
                 ],
               ),
-              const Divider(
-                height: 4,
-              ),
-              //grid view and details
-              Expanded(
-                child: SplitView(
-                    indicator: SplitIndicator(
-                      isActive: true,
-                      viewMode: SplitViewMode.Horizontal,
-                      color: Theme.of(context).colorScheme.background,
-                    ),
-                    viewMode: SplitViewMode.Horizontal,
-                    controller: SplitViewController(
-                      weights: [.6, null],
-                      limits: [WeightLimit(min: .4, max: .8)],
-                    ),
-                    children: [
-                      FileGridView(
-                        audioPlayer: _audioPlayer,
-                      ),
-                      const FileDetailDisplay(),
-                    ]),
-              )
             ],
+          ),
+          Container(
+            alignment: Alignment.topRight,
+            child: IconButton(
+              onPressed: () {
+                showAbout(context);
+              },
+              tooltip: 'About',
+              icon: const Icon(Icons.info),
+            ),
           ),
         ],
       ),

@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:sqlite3/sqlite3.dart';
 
 class VersionInfo {
@@ -30,7 +29,6 @@ class VersionInfo {
             : patch > other.patch
                 ? true
                 : false;
-    debugPrint('VersionInfo:operator > - checking $this > $other - $result');
     return result;
   }
 }
@@ -143,7 +141,6 @@ class AssetPileViewerDbSchema {
     final results = db.select('select version from db_version_history');
     for (final row in results) {
       final version = VersionInfo.fromString(row['version']);
-      debugPrint('checking version $version against $currentSchemaVersion');
       if (version > currentSchemaVersion) {
         // throw 'Database version greater than expected: db version: $version, expected: $currentSchemaVersion';
         foundSchemaVersion = version;
