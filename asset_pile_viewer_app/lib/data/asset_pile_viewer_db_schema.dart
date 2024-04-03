@@ -1,37 +1,7 @@
 import 'dart:io';
 
+import 'package:assetPileViewer/common/version_info.dart';
 import 'package:sqlite3/sqlite3.dart';
-
-class VersionInfo {
-  final int major;
-  final int minor;
-  final int patch;
-
-  VersionInfo({required this.major, required this.minor, required this.patch});
-
-  factory VersionInfo.fromString(String versionString) {
-    final versionParts = versionString.split('.');
-    return VersionInfo(
-        major: int.parse(versionParts[0]),
-        minor: int.parse(versionParts[1]),
-        patch: int.parse(versionParts[2]));
-  }
-
-  @override
-  String toString() => '$major.$minor.$patch';
-
-  //@override
-  bool operator >(VersionInfo other) {
-    final result = major > other.major
-        ? true
-        : minor > other.minor
-            ? true
-            : patch > other.patch
-                ? true
-                : false;
-    return result;
-  }
-}
 
 final currentSchemaVersion = VersionInfo(major: 0, minor: 1, patch: 0);
 VersionInfo? foundSchemaVersion;
@@ -56,18 +26,18 @@ class AssetPileViewerDbSchema {
     return tableNames;
   }
 
-  String _getDbVersion(Database db) {
+  VersionInfo _getDbVersion(Database db) {
     final resultSet = db.select(
         'select version from db_version_history order by id desc limit 1');
 
-    return resultSet.firstOrNull?['version'] ?? '';
+    return VersionInfo.fromString(resultSet.firstOrNull?['version'] ?? '');
   }
 
-  void _insertDbVersion(Database db, String version) {
+  void _insertDbVersion(Database db, VersionInfo version) {
     final now = DateTime.now().toUtc().toIso8601String();
     db.execute(
         'insert into db_version_history (version, date_time) values (?, ?)',
-        [version, now]);
+        [version.toString(), now]);
   }
 
   void _ensureTables(Database db, List<String> allTableNames,
@@ -81,9 +51,11 @@ class AssetPileViewerDbSchema {
   }
 
   void _ensureSchemaVersion0_1_0(Database db, List<String> allTableNames) {
-    final currentDbVersion =
-        allTableNames.contains('db_version_history') ? _getDbVersion(db) : '';
-    if (currentDbVersion == '0.1.0') {
+    final schemaVersion = VersionInfo(major: 0, minor: 1, patch: 0);
+    final currentDbVersion = allTableNames.contains('db_version_history')
+        ? _getDbVersion(db)
+        : VersionInfo.empty();
+    if (currentDbVersion == schemaVersion) {
       return;
     }
     _ensureTables(
@@ -130,7 +102,7 @@ class AssetPileViewerDbSchema {
       },
     );
 
-    _insertDbVersion(db, '0.1.0');
+    _insertDbVersion(db, schemaVersion);
   }
 
   bool _isDbNewerVersion(Database db, List<String> allTableNames) {

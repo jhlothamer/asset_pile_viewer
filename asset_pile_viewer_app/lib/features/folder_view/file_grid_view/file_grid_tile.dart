@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:assetPileViewer/common/util/string_extensions.dart';
 import 'package:assetPileViewer/common/widgets/images.dart';

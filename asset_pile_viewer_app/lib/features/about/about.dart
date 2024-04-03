@@ -1,6 +1,6 @@
+import 'package:assetPileViewer/common/app_version.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:assetPileViewer/data/asset_pile_viewer_db_schema.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -39,7 +39,7 @@ void showAbout(BuildContext context) {
   showAboutDialog(
     context: context,
     applicationName: 'Asset Pile Viewer',
-    applicationVersion: currentSchemaVersion.toString(),
+    applicationVersion: appVersion.toString(),
     applicationLegalese: '\u{a9} 2024 Jason Lothamer',
     applicationIcon: Image.asset('assets/images/app_icon.png'),
     children: [

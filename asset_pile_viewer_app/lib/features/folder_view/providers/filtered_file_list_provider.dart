@@ -1,4 +1,3 @@
-import 'package:assetPileViewer/common/util/string_extensions.dart';
 import 'package:assetPileViewer/features/folder_view/folder_view/directory_node.dart';
 import 'package:assetPileViewer/features/folder_view/providers/file_list_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/file_view_filter_provider.dart';
