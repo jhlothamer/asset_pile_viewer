@@ -10,6 +10,12 @@ Features include:
   * Supports Windows and Linux.
 
 
+<p align="center">
+<img src="readme_images/screenshot.png" />
+</p>
+
+
+
 ## Supported File Formats
 The following file formats are currently supported:
 
