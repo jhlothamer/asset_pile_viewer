@@ -93,7 +93,7 @@ class _FolderViewTileState extends ConsumerState<FolderViewTile> {
         entry: widget.entry,
         guide: const IndentGuide.connectingLines(indent: 48),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(4, 8, 8, 8),
+          padding: const EdgeInsets.all(4.0),
           child: Container(
             color: selected ? Theme.of(context).focusColor : null,
             child: Flex(

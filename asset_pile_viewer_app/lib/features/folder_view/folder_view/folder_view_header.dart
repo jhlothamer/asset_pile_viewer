@@ -15,7 +15,7 @@ class FolderViewHeader extends ConsumerWidget {
     final showHidden = ref.watch(showHiddenFoldersProvider);
 
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.only(left: 8, right: 8, top: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

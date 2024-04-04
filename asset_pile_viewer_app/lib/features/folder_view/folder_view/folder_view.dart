@@ -83,7 +83,7 @@ class _FolderViewState extends ConsumerState<FolderView> {
 
   Widget _createTree() {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: TreeView(
         treeController: _treeController!,
         nodeBuilder: _buildNode,
