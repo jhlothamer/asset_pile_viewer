@@ -1,12 +1,16 @@
 import 'dart:io';
 
+import 'package:assetPileViewer/common/util/path.dart';
 import 'package:assetPileViewer/common/util/string_extensions.dart';
 import 'package:assetPileViewer/common/widgets/images.dart';
 import 'package:assetPileViewer/common/widgets/keyword_edit.dart';
 import 'package:assetPileViewer/common/widgets/open_file_explorer_button.dart';
 import 'package:assetPileViewer/features/folder_view/file_details/audio_file_details.dart';
+import 'package:assetPileViewer/features/folder_view/folder_view/directory_node.dart';
+import 'package:assetPileViewer/features/folder_view/providers/asset_directories_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/asset_files_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/asset_root_folder_provider.dart';
+import 'package:assetPileViewer/features/folder_view/providers/directory_tree_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/keywords_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/selected_file_provider.dart';
 import 'package:assetPileViewer/models/models.dart';
@@ -29,10 +33,17 @@ class _FileDetailDisplayState extends ConsumerState<FileDetailDisplay> {
   Widget build(BuildContext context) {
     final assetRootFolder = ref.watch(assetRootFolderProvider);
     final selectedFilePath = ref.watch(selectedFileProvider);
+    final rootNode = ref.watch(directoryTreeProvider).value;
 
     if (selectedFilePath.isEmpty) {
       return const Center(
         child: Text('Please select a file'),
+      );
+    }
+
+    if (rootNode == null) {
+      return const Center(
+        child: CircularProgressIndicator(),
       );
     }
 
@@ -73,7 +84,7 @@ class _FileDetailDisplayState extends ConsumerState<FileDetailDisplay> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  ..._getDetails(selectedFilePath, assetRootFolder),
+                  ..._getDetails(selectedFilePath, assetRootFolder, rootNode),
                   if (fileType == FileType.texture)
                     ..._getTextureDetails(context, selectedFilePath),
                   if (fileType == FileType.sound)
@@ -87,11 +98,15 @@ class _FileDetailDisplayState extends ConsumerState<FileDetailDisplay> {
     );
   }
 
-  List<Widget> _getDetails(String selectedFilePath, String assetRootFolder) {
+  List<Widget> _getDetails(
+      String selectedFilePath, String assetRootFolder, DirectoryNode rootNode) {
     final assetFile = ref.watch(assetFilesProvider)[selectedFilePath] ??
         AssetFile.newFile(selectedFilePath);
-    final relativeFilepath =
+    final relativeFolderPath =
         selectedFilePath.replaceAll(assetRootFolder, '').justPath();
+
+    final inheritedKeywords =
+        _getInheritedKeywords(relativeFolderPath, rootNode).join(', ');
 
     return [
       Row(
@@ -106,9 +121,9 @@ class _FileDetailDisplayState extends ConsumerState<FileDetailDisplay> {
         children: [
           Flexible(
             child: Tooltip(
-              message: relativeFilepath,
+              message: relativeFolderPath,
               child: Text(
-                relativeFilepath,
+                relativeFolderPath,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -120,6 +135,17 @@ class _FileDetailDisplayState extends ConsumerState<FileDetailDisplay> {
         children: [
           Text(
             'keywords:',
+          ),
+        ],
+      ),
+      const SizedBox(
+        height: 5,
+      ),
+      Row(
+        children: [
+          Text(
+            'inherited: $inheritedKeywords',
+            style: const TextStyle(fontStyle: FontStyle.italic),
           ),
         ],
       ),
@@ -183,5 +209,19 @@ class _FileDetailDisplayState extends ConsumerState<FileDetailDisplay> {
       const SizedBox(height: 8),
       AudioFileDetails(filePath: selectedFilePath),
     ];
+  }
+
+  List<String> _getInheritedKeywords(
+      String relativeFolderPath, DirectoryNode rootNode) {
+    final folderPath = relativeFolderPath.split(pathSeparator);
+    folderPath.removeWhere((e) => e.isEmpty);
+    final directoryNode = rootNode.getDirectoryNode(folderPath);
+    if (directoryNode == null) {
+      return [];
+    }
+    final assetDirectories = ref.read(assetDirectoriesProvider);
+    final inheritedKeywords =
+        directoryNode.getInheritedKeywords(assetDirectories);
+    return inheritedKeywords.toList();
   }
 }
