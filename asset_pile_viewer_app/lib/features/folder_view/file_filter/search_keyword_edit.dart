@@ -16,10 +16,12 @@ class SearchKeywordEdit extends ConsumerStatefulWidget {
 class _SearchKeywordEditState extends ConsumerState<SearchKeywordEdit> {
   List<String> selectedKeywords = [];
   final _debounce = Debounce();
+  final _controller = MultiSelectController<String>();
   @override
   void dispose() {
     _debounce.close();
     super.dispose();
+    _controller.dispose();
   }
 
   @override
@@ -35,13 +37,20 @@ class _SearchKeywordEditState extends ConsumerState<SearchKeywordEdit> {
           ),
         )
         .toList();
+    final selectedItems =
+        items.where((i) => selectedKeywords.contains(i.value)).toList();
+
+    _controller.setOptions(items);
+    _controller.setSelectedOptions(selectedItems);
 
     final theme = Theme.of(context);
     final backgroundColor = theme.primaryColor;
     final selectedOptionColor = theme.secondaryHeaderColor;
 
     return MultiSelectDropDown<String>(
+      key: const Key('Keyword Filter'),
       hint: 'Keyword Filter',
+      controller: _controller,
       onOptionSelected: (selectedOptions) {
         selectedKeywords = selectedOptions.map((e) => e.value!).toList();
         _debounce.run(() {
@@ -55,6 +64,7 @@ class _SearchKeywordEditState extends ConsumerState<SearchKeywordEdit> {
         });
       },
       options: items,
+      selectedOptions: selectedItems,
       selectionType: SelectionType.multi,
       chipConfig: const ChipConfig(wrapType: WrapType.wrap),
       fieldBackgroundColor: Colors.transparent,
