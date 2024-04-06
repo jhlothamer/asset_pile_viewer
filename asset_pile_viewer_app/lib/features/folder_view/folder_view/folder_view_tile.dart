@@ -168,6 +168,14 @@ class _FolderViewTileState extends ConsumerState<FolderViewTile> {
       return;
     }
 
+    final resultsSet = Set.from(results);
+    if (results.length == keywords.length) {
+      if (resultsSet.containsAll(keywords)) {
+        //no change
+        return;
+      }
+    }
+
     final savedKeywords = ref
         .read(keywordsProvider.notifier)
         .saveAll(results.map((e) => Keyword.newKeyword(name: e)).toList());
@@ -177,5 +185,9 @@ class _FolderViewTileState extends ConsumerState<FolderViewTile> {
             .assetDirectoryProvider(widget.entry.node.diskPath)
             .notifier)
         .updateKeywords(updatedKeywords);
+
+    if (!resultsSet.containsAll(keywords)) {
+      ref.read(keywordsProvider.notifier).purgeUnused();
+    }
   }
 }

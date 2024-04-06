@@ -47,4 +47,11 @@ class Keywords extends _$Keywords {
     ref.invalidateSelf();
     return updatedKeywords;
   }
+
+  void purgeUnused() {
+    final assetPileViewerRepo = ref.read(assetPileViewerRepoProvider);
+    if (assetPileViewerRepo.purgeUnusedKeywords()) {
+      ref.invalidateSelf();
+    }
+  }
 }
