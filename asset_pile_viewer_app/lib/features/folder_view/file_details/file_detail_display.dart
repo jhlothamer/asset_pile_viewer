@@ -163,13 +163,13 @@ class _FileDetailDisplayState extends ConsumerState<FileDetailDisplay> {
               .updateKeywords(selectedFilePath, updatedKeywords);
         },
         onKeywordDeleted: (deletedKeyword) {
-          //assetFile.keywords.removeWhere((e) => e.name == deletedKeyword);
           final updatedKeywords = assetFile.keywords
               .where((k) => k.name != deletedKeyword)
               .toList();
           ref
               .read(assetFilesProvider.notifier)
               .updateKeywords(selectedFilePath, updatedKeywords);
+          ref.read(keywordsProvider.notifier).purgeUnused();
         },
       ),
     ];

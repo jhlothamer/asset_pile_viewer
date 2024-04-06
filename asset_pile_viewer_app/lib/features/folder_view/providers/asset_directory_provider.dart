@@ -21,9 +21,9 @@ class AssetDirectory extends _$AssetDirectory {
   }
 
   void updateKeywords(List<model.Keyword> keywords) {
-    var assetDirectory = state.copyWith(keywords: keywords);
-    final assetPileViewerRepo = ref.read(assetPileViewerRepoProvider);
-    assetDirectory = assetPileViewerRepo.saveDirectory(assetDirectory);
-    state = assetDirectory;
+    ref
+        .read(assetDirectoriesProvider.notifier)
+        .updateKeywords(state.path, keywords);
+    ref.invalidateSelf();
   }
 }

@@ -92,7 +92,7 @@ class AssetPileViewerRepository {
         '   not exists (select * from file_keywords fk where fk.keyword_id = k.id) '
         ')  ');
 
-    return true;
+    return _db.updatedRows > 0;
   }
 
   List<AssetDirectory> getDirectories() {
