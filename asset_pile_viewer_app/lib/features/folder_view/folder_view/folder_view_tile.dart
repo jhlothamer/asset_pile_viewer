@@ -168,8 +168,8 @@ class _FolderViewTileState extends ConsumerState<FolderViewTile> {
       return;
     }
 
+    final resultsSet = Set.from(results);
     if (results.length == keywords.length) {
-      final resultsSet = Set.from(results);
       if (resultsSet.containsAll(keywords)) {
         //no change
         return;
@@ -186,7 +186,7 @@ class _FolderViewTileState extends ConsumerState<FolderViewTile> {
             .notifier)
         .updateKeywords(updatedKeywords);
 
-    if (results.length < keywords.length) {
+    if (!resultsSet.containsAll(keywords)) {
       ref.read(keywordsProvider.notifier).purgeUnused();
     }
   }
