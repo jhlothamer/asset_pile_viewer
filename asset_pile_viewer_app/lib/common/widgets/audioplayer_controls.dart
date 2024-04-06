@@ -43,13 +43,16 @@ class _AudioPlayerControlsState extends State<AudioPlayerControls> {
 
   AudioPlayer get player => widget.player;
 
+  String _cachedSrcFilePath = '';
+
   String get _srcFileName {
     if (player.source == null || player.source is! DeviceFileSource) {
-      return '';
+      return _cachedSrcFilePath.fileName();
     }
 
     final fileSource = player.source as DeviceFileSource;
-    return fileSource.path.fileName();
+    _cachedSrcFilePath = fileSource.path;
+    return _cachedSrcFilePath.fileName();
   }
 
   @override
@@ -98,7 +101,7 @@ class _AudioPlayerControlsState extends State<AudioPlayerControls> {
           children: [
             IconButton(
               key: const Key('play_button'),
-              onPressed: _isPlaying || !_hasSource ? null : _play,
+              onPressed: _isPlaying || _srcFileName.isEmpty ? null : _play,
               iconSize: iconSize,
               icon: const Icon(Icons.play_arrow),
             ),
@@ -116,7 +119,7 @@ class _AudioPlayerControlsState extends State<AudioPlayerControls> {
             ),
           ],
         ),
-        Text(_hasSource ? _srcFileName : ''),
+        Text(_srcFileName),
         Slider(
           onChanged: !_hasSource
               ? null
@@ -172,6 +175,12 @@ class _AudioPlayerControlsState extends State<AudioPlayerControls> {
   }
 
   Future<void> _play() async {
+    if (player.source == null) {
+      if (_cachedSrcFilePath.isEmpty) {
+        return;
+      }
+      player.play(DeviceFileSource(_cachedSrcFilePath));
+    }
     await player.resume();
     setState(() => _playerState = PlayerState.playing);
   }
