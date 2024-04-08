@@ -1,4 +1,4 @@
-import 'package:assetPileViewer/common/widgets/audioplayer_controls.dart';
+import 'package:assetPileViewer/common/widgets/audioplayer/audioplayer_controls.dart';
 import 'package:assetPileViewer/features/about/about.dart';
 import 'package:assetPileViewer/features/folder_view/file_filter/file_filter.dart';
 import 'package:assetPileViewer/features/folder_view/file_grid_view/file_grid_view.dart';

@@ -3,6 +3,12 @@ import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 
+enum Repeat {
+  off,
+  one,
+  all,
+}
+
 class AudioPlayerButtons extends StatefulWidget {
   final AudioPlayer player;
   final double iconSize;
@@ -17,10 +23,13 @@ class _AudioPlayerButtonsState extends State<AudioPlayerButtons> {
   StreamSubscription? _playerCompleteSubscription;
   StreamSubscription? _playerStateChangeSubscription;
   String _cachedSrcFilePath = '';
+  Repeat repeat = Repeat.off;
+
   AudioPlayer get player => widget.player;
   double get iconSize => widget.iconSize;
   bool get _isPlaying => player.state == PlayerState.playing;
   bool get _isPaused => player.state == PlayerState.paused;
+
   String get _srcFilePath {
     if (player.source == null || player.source is! DeviceFileSource) {
       return _cachedSrcFilePath;
@@ -34,12 +43,28 @@ class _AudioPlayerButtonsState extends State<AudioPlayerButtons> {
   @override
   void initState() {
     _playerCompleteSubscription = player.onPlayerComplete.listen((event) {
-      setState(() {});
+      // debugPrint('completed');
+      // if (repeat == Repeat.one) {
+      //   debugPrint('repeating');
+      //   _play();
+      // }
+      setState(() {
+        if (repeat == Repeat.one) {
+          _play();
+        }
+      });
     });
 
     _playerStateChangeSubscription =
         player.onPlayerStateChanged.listen((state) {
-      setState(() {});
+      setState(() {
+        if (player.source == null || player.source is! DeviceFileSource) {
+          return;
+        }
+
+        final fileSource = player.source as DeviceFileSource;
+        _cachedSrcFilePath = fileSource.path;
+      });
     });
 
     super.initState();
@@ -75,6 +100,22 @@ class _AudioPlayerButtonsState extends State<AudioPlayerButtons> {
           iconSize: iconSize,
           icon: const Icon(Icons.stop),
         ),
+        IconButton(
+          onPressed: () {
+            setState(() {
+              repeat = switch (repeat) {
+                Repeat.off => Repeat.one,
+                Repeat.one => Repeat.off,
+                Repeat.all => Repeat.off,
+              };
+            });
+          },
+          icon: switch (repeat) {
+            Repeat.off => const Icon(Icons.repeat),
+            Repeat.one => const Icon(Icons.repeat_one_on_rounded),
+            Repeat.all => const Icon(Icons.repeat_on),
+          },
+        ),
       ],
     );
   }
@@ -82,26 +123,19 @@ class _AudioPlayerButtonsState extends State<AudioPlayerButtons> {
   Future<void> _play() async {
     if (player.source == null) {
       if (_cachedSrcFilePath.isEmpty) {
+        debugPrint('no source and no cached file path');
         return;
       }
       player.play(DeviceFileSource(_cachedSrcFilePath));
     }
     await player.resume();
-    // setState(() {
-    //   //_playerState = PlayerState.playing;
-    // });
   }
 
   Future<void> _pause() async {
     await player.pause();
-    //setState(() => _playerState = PlayerState.paused);
   }
 
   Future<void> _stop() async {
     await player.stop();
-    // setState(() {
-    //   _playerState = PlayerState.stopped;
-    //   _position = Duration.zero;
-    // });
   }
 }

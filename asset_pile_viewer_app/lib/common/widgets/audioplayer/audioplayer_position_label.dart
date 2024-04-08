@@ -42,7 +42,9 @@ class _AudioPlayerPositionLabelState extends State<AudioPlayerPositionLabel> {
     });
 
     _positionSubscription = player.onPositionChanged.listen(
-      (p) => setState(() => _position = p),
+      (p) => setState(() {
+        _position = p;
+      }),
     );
 
     _playerCompleteSubscription = player.onPlayerComplete.listen((event) {

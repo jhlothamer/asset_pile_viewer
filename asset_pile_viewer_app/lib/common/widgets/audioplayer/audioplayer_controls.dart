@@ -1,7 +1,7 @@
-import 'package:assetPileViewer/common/widgets/audioplayer_buttons.dart';
-import 'package:assetPileViewer/common/widgets/audioplayer_nowplaying.dart';
-import 'package:assetPileViewer/common/widgets/audioplayer_position_label.dart';
-import 'package:assetPileViewer/common/widgets/audioplayer_scrub_ctrl.dart';
+import 'package:assetPileViewer/common/widgets/audioplayer/audioplayer_buttons.dart';
+import 'package:assetPileViewer/common/widgets/audioplayer/audioplayer_nowplaying.dart';
+import 'package:assetPileViewer/common/widgets/audioplayer/audioplayer_position_label.dart';
+import 'package:assetPileViewer/common/widgets/audioplayer/audioplayer_scrub_ctrl.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 
