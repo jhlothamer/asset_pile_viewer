@@ -46,19 +46,13 @@ class _FolderViewPageState extends State<FolderViewPage> {
               Flex(
                 direction: Axis.vertical,
                 children: [
-                  //filter stand in
-                  Flex(
-                    direction: Axis.horizontal,
-                    children: [
-                      const Expanded(
-                        flex: 3,
-                        child: FileFilter(),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: AudioPlayerControls(player: _audioPlayer),
-                      ),
-                    ],
+                  const Padding(
+                    padding: EdgeInsets.only(right: 40),
+                    child: FileFilter(),
+                  ),
+                  const Divider(),
+                  AudioPlayerControls(
+                    player: _audioPlayer,
                   ),
                   const Divider(
                     height: 4,
