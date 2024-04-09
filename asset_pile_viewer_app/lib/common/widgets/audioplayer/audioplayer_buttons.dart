@@ -84,6 +84,15 @@ class _AudioPlayerButtonsState extends ConsumerState<AudioPlayerButtons> {
       mainAxisSize: MainAxisSize.min,
       children: [
         IconButton(
+          onPressed: !playListOn
+              ? null
+              : () {
+                  _skip(-1);
+                },
+          iconSize: iconSize,
+          icon: const Icon(Icons.skip_previous),
+        ),
+        IconButton(
           key: const Key('play_button'),
           onPressed: _isPlaying || _srcFilePath.isEmpty ? null : _play,
           iconSize: iconSize,
@@ -100,6 +109,15 @@ class _AudioPlayerButtonsState extends ConsumerState<AudioPlayerButtons> {
           onPressed: _isPlaying || _isPaused ? _stop : null,
           iconSize: iconSize,
           icon: const Icon(Icons.stop),
+        ),
+        IconButton(
+          onPressed: !playListOn
+              ? null
+              : () {
+                  _skip(1);
+                },
+          iconSize: iconSize,
+          icon: const Icon(Icons.skip_next),
         ),
         IconButton(
           tooltip: 'Toggle repeat one, all, off (currently ${repeat.name})',
@@ -130,7 +148,16 @@ class _AudioPlayerButtonsState extends ConsumerState<AudioPlayerButtons> {
         return;
       }
       player.play(DeviceFileSource(filePath ?? _cachedSrcFilePath));
+      return;
     }
+    if (filePath != null) {
+      final source = player.source as DeviceFileSource;
+      if (source.path != filePath) {
+        player.play(DeviceFileSource(filePath));
+        return;
+      }
+    }
+
     await player.resume();
   }
 
@@ -179,5 +206,35 @@ class _AudioPlayerButtonsState extends ConsumerState<AudioPlayerButtons> {
       return;
     }
     _play(playList[0]);
+  }
+
+  void _skip(int direction) {
+    final playList = ref.read(audioPlayListProvider);
+    if (playList.isEmpty) {
+      //nothing to skip to
+      debugPrint('nothing to skip');
+      return;
+    }
+    final index = playList.indexOf(_cachedSrcFilePath) + direction;
+    if (index >= 0 && index < playList.length) {
+      //skip to index valid
+      _play(playList[index]);
+      debugPrint('skipping to $index from ${index - direction}');
+      return;
+    }
+    if (repeat != Repeat.all) {
+      //only wrap to first/last on skip if repeat is all
+      debugPrint('no skip - repeat not all');
+      return;
+    }
+    if (index < 0) {
+      //skip to last from first
+      _play(playList.last);
+      debugPrint('skipping to last from first');
+      return;
+    }
+    //skip to first from last
+    _play(playList.first);
+    debugPrint('skipping to first from last');
   }
 }
