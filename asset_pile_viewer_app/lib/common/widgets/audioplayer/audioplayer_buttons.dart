@@ -94,15 +94,13 @@ class _AudioPlayerButtonsState extends ConsumerState<AudioPlayerButtons> {
         ),
         IconButton(
           key: const Key('play_button'),
-          onPressed: _isPlaying || _srcFilePath.isEmpty ? null : _play,
+          onPressed: _srcFilePath.isEmpty
+              ? null
+              : _isPlaying
+                  ? _pause
+                  : _play,
           iconSize: iconSize,
-          icon: const Icon(Icons.play_arrow),
-        ),
-        IconButton(
-          key: const Key('pause_button'),
-          onPressed: _isPlaying ? _pause : null,
-          iconSize: iconSize,
-          icon: const Icon(Icons.pause),
+          icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow),
         ),
         IconButton(
           key: const Key('stop_button'),
