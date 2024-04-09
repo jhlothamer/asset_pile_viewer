@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:assetPileViewer/common/util/string_extensions.dart';
+import 'package:assetPileViewer/common/widgets/audioplayer/playlist_toggle_button.dart';
 import 'package:assetPileViewer/common/widgets/selected_widget_controller.dart';
 import 'package:assetPileViewer/features/folder_view/file_grid_view/file_grid_tile.dart';
 import 'package:assetPileViewer/features/folder_view/providers/asset_root_folder_provider.dart';
@@ -66,9 +67,15 @@ class _FileGridViewState extends ConsumerState<FileGridView> {
         //header
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Text(
-            folderString,
-            style: Theme.of(context).textTheme.labelLarge,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                folderString,
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+              const PlayListToggleButton(),
+            ],
           ),
         ),
         const Divider(),

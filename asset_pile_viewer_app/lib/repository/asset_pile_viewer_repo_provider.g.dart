@@ -7,7 +7,7 @@ part of 'asset_pile_viewer_repo_provider.dart';
 // **************************************************************************
 
 String _$assetPileViewerRepoHash() =>
-    r'2a35f12dd1fdfbd4dd32fe0f390ad8b606c8aaa1';
+    r'9f980e51fa12305648b01f14bd7f13d16fe983b5';
 
 /// See also [assetPileViewerRepo].
 @ProviderFor(assetPileViewerRepo)

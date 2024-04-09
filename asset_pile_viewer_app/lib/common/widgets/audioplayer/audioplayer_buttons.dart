@@ -1,7 +1,10 @@
 import 'dart:async';
 
+import 'package:assetPileViewer/features/folder_view/providers/audio_playlist_provider.dart';
+import 'package:assetPileViewer/features/folder_view/providers/playlist_toggle_provider.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum Repeat {
   off,
@@ -9,21 +12,22 @@ enum Repeat {
   all,
 }
 
-class AudioPlayerButtons extends StatefulWidget {
+class AudioPlayerButtons extends ConsumerStatefulWidget {
   final AudioPlayer player;
   final double iconSize;
   const AudioPlayerButtons(
       {super.key, required this.player, this.iconSize = 32});
 
   @override
-  State<AudioPlayerButtons> createState() => _AudioPlayerButtonsState();
+  ConsumerState<AudioPlayerButtons> createState() => _AudioPlayerButtonsState();
 }
 
-class _AudioPlayerButtonsState extends State<AudioPlayerButtons> {
+class _AudioPlayerButtonsState extends ConsumerState<AudioPlayerButtons> {
   StreamSubscription? _playerCompleteSubscription;
   StreamSubscription? _playerStateChangeSubscription;
   String _cachedSrcFilePath = '';
   Repeat repeat = Repeat.off;
+  bool _prevPlayListOn = false;
 
   AudioPlayer get player => widget.player;
   double get iconSize => widget.iconSize;
@@ -42,18 +46,8 @@ class _AudioPlayerButtonsState extends State<AudioPlayerButtons> {
 
   @override
   void initState() {
-    _playerCompleteSubscription = player.onPlayerComplete.listen((event) {
-      // debugPrint('completed');
-      // if (repeat == Repeat.one) {
-      //   debugPrint('repeating');
-      //   _play();
-      // }
-      setState(() {
-        if (repeat == Repeat.one) {
-          _play();
-        }
-      });
-    });
+    _playerCompleteSubscription =
+        player.onPlayerComplete.listen(_onPlayerCompleted);
 
     _playerStateChangeSubscription =
         player.onPlayerStateChanged.listen((state) {
@@ -79,6 +73,13 @@ class _AudioPlayerButtonsState extends State<AudioPlayerButtons> {
 
   @override
   Widget build(BuildContext context) {
+    final playListOn = ref.watch(playListToggleProvider);
+
+    if (playListOn && !_prevPlayListOn && player.state != PlayerState.playing) {
+      _startPlayList();
+    }
+    _prevPlayListOn = playListOn;
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -101,11 +102,12 @@ class _AudioPlayerButtonsState extends State<AudioPlayerButtons> {
           icon: const Icon(Icons.stop),
         ),
         IconButton(
+          tooltip: 'Toggle repeat one, all, off (currently ${repeat.name})',
           onPressed: () {
             setState(() {
               repeat = switch (repeat) {
                 Repeat.off => Repeat.one,
-                Repeat.one => Repeat.off,
+                Repeat.one => Repeat.all,
                 Repeat.all => Repeat.off,
               };
             });
@@ -120,13 +122,14 @@ class _AudioPlayerButtonsState extends State<AudioPlayerButtons> {
     );
   }
 
-  Future<void> _play() async {
+  Future<void> _play([String? filePath]) async {
     if (player.source == null) {
-      if (_cachedSrcFilePath.isEmpty) {
+      if (_cachedSrcFilePath.isEmpty &&
+          (filePath == null || filePath.isEmpty)) {
         debugPrint('no source and no cached file path');
         return;
       }
-      player.play(DeviceFileSource(_cachedSrcFilePath));
+      player.play(DeviceFileSource(filePath ?? _cachedSrcFilePath));
     }
     await player.resume();
   }
@@ -137,5 +140,44 @@ class _AudioPlayerButtonsState extends State<AudioPlayerButtons> {
 
   Future<void> _stop() async {
     await player.stop();
+  }
+
+  void _onPlayerCompleted(void event) {
+    if (repeat == Repeat.one) {
+      _play();
+      return;
+    }
+
+    final playList = ref.read(audioPlayListProvider);
+    if (playList.isNotEmpty) {
+      final index = playList.indexOf(_cachedSrcFilePath);
+      if (index < 0) {
+        _play(playList[0]);
+        return;
+      }
+      if ((index + 1) < playList.length) {
+        _play(playList[index + 1]);
+        return;
+      }
+      if (repeat == Repeat.all) {
+        _play(playList[0]);
+      }
+      return;
+    }
+
+    if (repeat == Repeat.off) {
+      return;
+    }
+    //Repeat.all - same as Repeat.one when no play list
+    _play();
+    return;
+  }
+
+  void _startPlayList() {
+    final playList = ref.read(audioPlayListProvider);
+    if (playList.isEmpty) {
+      return;
+    }
+    _play(playList[0]);
   }
 }

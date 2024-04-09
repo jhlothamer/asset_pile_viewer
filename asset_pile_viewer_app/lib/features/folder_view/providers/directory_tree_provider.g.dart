@@ -6,7 +6,7 @@ part of 'directory_tree_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$directoryTreeHash() => r'a06df027edc7c9b19e1656e0c53b6a47beb735e8';
+String _$directoryTreeHash() => r'2356d1fecf89e2f5ce7b3f0e46f57b8257ccf2fe';
 
 /// See also [DirectoryTree].
 @ProviderFor(DirectoryTree)
