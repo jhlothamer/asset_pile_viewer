@@ -144,7 +144,6 @@ class _AudioPlayerButtonsState extends ConsumerState<AudioPlayerButtons> {
     if (player.source == null) {
       if (_cachedSrcFilePath.isEmpty &&
           (filePath == null || filePath.isEmpty)) {
-        debugPrint('no source and no cached file path');
         return;
       }
       player.play(DeviceFileSource(filePath ?? _cachedSrcFilePath));
@@ -212,29 +211,24 @@ class _AudioPlayerButtonsState extends ConsumerState<AudioPlayerButtons> {
     final playList = ref.read(audioPlayListProvider);
     if (playList.isEmpty) {
       //nothing to skip to
-      debugPrint('nothing to skip');
       return;
     }
     final index = playList.indexOf(_cachedSrcFilePath) + direction;
     if (index >= 0 && index < playList.length) {
       //skip to index valid
       _play(playList[index]);
-      debugPrint('skipping to $index from ${index - direction}');
       return;
     }
     if (repeat != Repeat.all) {
       //only wrap to first/last on skip if repeat is all
-      debugPrint('no skip - repeat not all');
       return;
     }
     if (index < 0) {
       //skip to last from first
       _play(playList.last);
-      debugPrint('skipping to last from first');
       return;
     }
     //skip to first from last
     _play(playList.first);
-    debugPrint('skipping to first from last');
   }
 }
