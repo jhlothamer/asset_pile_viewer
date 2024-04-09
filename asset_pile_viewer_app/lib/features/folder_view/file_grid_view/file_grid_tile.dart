@@ -113,14 +113,6 @@ class _FileGridTileState extends ConsumerState<FileGridTile> {
     } else {
       ref.read(selectedFileProvider.notifier).clear();
     }
-
-    if (widget.controller == null) {
-      setState(() {
-        selected = !selected;
-      });
-    } else {
-      widget.controller?.change(widget, !selected);
-    }
   }
 
   Widget _createInner(BuildContext context) {

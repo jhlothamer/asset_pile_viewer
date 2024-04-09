@@ -48,6 +48,10 @@ class _FileGridViewState extends ConsumerState<FileGridView> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(selectedFileProvider, (previous, next) {
+      _selectedTileController.changeWithKey(Key(next), true);
+    });
+
     final fileList = ref.watch(filteredFileListProvider);
     final assetRootFolder = ref.watch(assetRootFolderProvider);
     final selectedFolder = ref.watch(selectedFolderProvider);
@@ -91,7 +95,7 @@ class _FileGridViewState extends ConsumerState<FileGridView> {
             ),
             itemBuilder: (context, index) {
               return FileGridTile(
-                key: ValueKey(fileList[index]),
+                key: ValueKey(fileList[index].path),
                 fileList[index],
                 widget.audioPlayer,
                 controller: _selectedTileController,

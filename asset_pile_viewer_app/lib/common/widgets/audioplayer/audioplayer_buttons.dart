@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:assetPileViewer/features/folder_view/providers/audio_playlist_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/playlist_toggle_provider.dart';
+import 'package:assetPileViewer/features/folder_view/providers/selected_file_provider.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -145,12 +146,16 @@ class _AudioPlayerButtonsState extends ConsumerState<AudioPlayerButtons> {
         return;
       }
       player.play(DeviceFileSource(filePath ?? _cachedSrcFilePath));
+      ref
+          .read(selectedFileProvider.notifier)
+          .update(filePath ?? _cachedSrcFilePath);
       return;
     }
     if (filePath != null) {
       final source = player.source as DeviceFileSource;
       if (source.path != filePath) {
         player.play(DeviceFileSource(filePath));
+        ref.read(selectedFileProvider.notifier).update(filePath);
         return;
       }
     }
@@ -198,11 +203,13 @@ class _AudioPlayerButtonsState extends ConsumerState<AudioPlayerButtons> {
   }
 
   void _startPlayList() {
-    final playList = ref.read(audioPlayListProvider);
-    if (playList.isEmpty) {
-      return;
-    }
-    _play(playList[0]);
+    Future.delayed(Duration.zero, () {
+      final playList = ref.read(audioPlayListProvider);
+      if (playList.isEmpty) {
+        return;
+      }
+      _play(playList[0]);
+    });
   }
 
   void _skip(int direction) {
