@@ -6,7 +6,7 @@ part of 'asset_directory_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$assetDirectoryHash() => r'67ec97380fb8052f7ce43ee0015744ab75f91d66';
+String _$assetDirectoryHash() => r'4772f1fca5bc67593ea1fd037dbe6f221bf0b4a1';
 
 /// Copied from Dart SDK
 class _SystemHash {

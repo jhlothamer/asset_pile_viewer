@@ -6,7 +6,7 @@ part of 'keywords_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$keywordsHash() => r'c93f651868a56d1b69f3174ce7218ca6a57d119f';
+String _$keywordsHash() => r'44d45da1cacbf51871eef759b33ebd8d2c209633';
 
 /// See also [Keywords].
 @ProviderFor(Keywords)

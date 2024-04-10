@@ -1,26 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'asset_directories_provider.dart';
+part of 'playlist_toggle_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$assetDirectoriesHash() => r'd8301264ce84b152988fa36a0ff4a941d098c932';
+String _$playListToggleHash() => r'6a1d2aaf1c7cdeea3ac2652c0837031641b35e5f';
 
-/// See also [AssetDirectories].
-@ProviderFor(AssetDirectories)
-final assetDirectoriesProvider = AutoDisposeNotifierProvider<AssetDirectories,
-    Map<String, AssetDirectory>>.internal(
-  AssetDirectories.new,
-  name: r'assetDirectoriesProvider',
+/// See also [PlayListToggle].
+@ProviderFor(PlayListToggle)
+final playListToggleProvider =
+    AutoDisposeNotifierProvider<PlayListToggle, bool>.internal(
+  PlayListToggle.new,
+  name: r'playListToggleProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$assetDirectoriesHash,
+      : _$playListToggleHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$AssetDirectories = AutoDisposeNotifier<Map<String, AssetDirectory>>;
+typedef _$PlayListToggle = AutoDisposeNotifier<bool>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

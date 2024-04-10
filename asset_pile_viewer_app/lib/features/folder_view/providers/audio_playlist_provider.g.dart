@@ -1,26 +1,25 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'asset_directories_provider.dart';
+part of 'audio_playlist_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$assetDirectoriesHash() => r'd8301264ce84b152988fa36a0ff4a941d098c932';
+String _$audioPlayListHash() => r'cfddaeda5c9fe6c3bf8208f911c9599e24c150cf';
 
-/// See also [AssetDirectories].
-@ProviderFor(AssetDirectories)
-final assetDirectoriesProvider = AutoDisposeNotifierProvider<AssetDirectories,
-    Map<String, AssetDirectory>>.internal(
-  AssetDirectories.new,
-  name: r'assetDirectoriesProvider',
+/// See also [audioPlayList].
+@ProviderFor(audioPlayList)
+final audioPlayListProvider = AutoDisposeProvider<List<String>>.internal(
+  audioPlayList,
+  name: r'audioPlayListProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$assetDirectoriesHash,
+      : _$audioPlayListHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$AssetDirectories = AutoDisposeNotifier<Map<String, AssetDirectory>>;
+typedef AudioPlayListRef = AutoDisposeProviderRef<List<String>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
