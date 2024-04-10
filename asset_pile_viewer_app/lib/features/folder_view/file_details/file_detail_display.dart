@@ -131,6 +131,7 @@ class _FileDetailDisplayState extends ConsumerState<FileDetailDisplay> {
           OpenFileExplorerButton(path: selectedFilePath.justPath()),
         ],
       ),
+      const Divider(),
       const Row(
         children: [
           Text(
@@ -194,6 +195,7 @@ class _FileDetailDisplayState extends ConsumerState<FileDetailDisplay> {
 
     return [
       const SizedBox(height: 8),
+      const Divider(),
       GestureDetector(
         onTap: () {
           showImageViewer(context, img!.image);
@@ -207,6 +209,7 @@ class _FileDetailDisplayState extends ConsumerState<FileDetailDisplay> {
   List<Widget> _getSoundDetails(String selectedFilePath) {
     return [
       const SizedBox(height: 8),
+      const Divider(),
       AudioFileDetails(filePath: selectedFilePath),
     ];
   }

@@ -15,30 +15,86 @@ class AudioFileDetails extends ConsumerWidget {
     return results.when(
       data: (tag) {
         return Column(
-          children: [..._tagToWidgets(tag)],
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Row(
+              children: [
+                Text('Audio Tags:'),
+              ],
+            ),
+            const SizedBox(
+              height: 8.0,
+            ),
+            ..._tagToWidgets(tag),
+          ],
         );
       },
       error: (e, __) {
         return Text('Error getting tags: ${e.toString()}');
       },
-      loading: () => const Text('loading audio tags ...'),
+      loading: () => Container(),
     );
   }
 
   List<Widget> _tagToWidgets(Tag? tag) {
     if (tag == null) {
-      return [const Text('no tag info retrieved')];
+      return [
+        const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'no tag info retrieved',
+            ),
+          ],
+        )
+      ];
     }
     final tagMap = _tagToMap(tag);
     if (tagMap.isEmpty) {
-      return [const Text('no tag info retrieved')];
-    }
-    final widgets = <Widget>[];
-    for (final key in tagMap.keys) {
-      widgets.add(Text('$key: ${tagMap[key]}'));
+      return [
+        const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'no tag info retrieved',
+            ),
+          ],
+        )
+      ];
     }
 
-    return widgets;
+    final altWidgets = <Widget>[
+      Table(
+        columnWidths: const {0: IntrinsicColumnWidth()},
+        children: [
+          ...tagMap.entries.map(
+            (e) => TableRow(
+              children: [
+                TableCell(
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Text(
+                      '${e.key}:',
+                      textAlign: TextAlign.end,
+                    ),
+                  ),
+                ),
+                TableCell(
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Text(
+                      e.value.toString(),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      )
+    ];
+
+    return altWidgets;
   }
 
   Map<String, String?> _tagToMap(Tag tag) {
@@ -53,7 +109,7 @@ class AudioFileDetails extends ConsumerWidget {
       'trackTotal': tag.trackTotal == null ? '' : tag.trackTotal.toString(),
       'discNumber': tag.discNumber == null ? '' : tag.discNumber.toString(),
       'discTotal': tag.discTotal == null ? '' : tag.discTotal.toString(),
-      'duration': tag.duration == null
+      'duration': tag.duration == null || tag.duration == 0
           ? ''
           : Duration(seconds: tag.duration!).toBetterString(),
     };
