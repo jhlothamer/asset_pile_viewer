@@ -124,7 +124,7 @@ class _FileGridTileState extends ConsumerState<FileGridTile> {
       case FileType.sound:
         return _createSoundInner();
       case _:
-        return const Text('Unhandled file type');
+        return Center(child: Text('.${widget.fileInfo.name.extension()}'),);
     }
   }
 

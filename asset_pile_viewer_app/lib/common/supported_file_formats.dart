@@ -1,3 +1,5 @@
+import 'dart:io';
+
 const _supportedImageExtensions = [
   'bmp',
   'jpeg',
@@ -15,6 +17,13 @@ const _supportedAudioExtensions = [
   'wav',
 ];
 
+List<String> _supportedAudioExtensionsForPlatform(List<String> extensions) {
+  if(Platform.isWindows){
+    return extensions.where((ext) => ext != 'ogg').toList();
+  }
+  return extensions;
+}
+
 const _supportedExtensions = [
   '',
   ..._supportedImageExtensions,
@@ -23,5 +32,6 @@ const _supportedExtensions = [
 ];
 
 final supportedImageExtensions = _supportedImageExtensions.join(',');
-final supportedAudioExtensions = _supportedAudioExtensions.join(',');
+final supportedAudioExtensions = _supportedAudioExtensionsForPlatform(_supportedAudioExtensions).join(',');
 final supportedExtensions = _supportedExtensions.join(',');
+
