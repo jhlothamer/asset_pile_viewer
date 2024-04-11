@@ -12,19 +12,32 @@ class OpenFileExplorerButton extends StatelessWidget {
     return IconButton(
       tooltip: 'Open explorer to $path',
       onPressed: () async {
-        ProcessResult? results;
         if(Platform.isLinux || Platform.operatingSystem == 'linux') {
-          results = await _launchLinux();
+          await _launchLinux();
         } else if(Platform.isWindows){
-          results = await _launchWindows();
+          await _launchWindows();
         } else {
           debugPrint(
               'Launching explorer for OS "${Platform.operatingSystem}" is not currently supported.');
         }
-        if(results == null){
-          return;
-        }
+      },
+      icon: const Icon(Icons.open_in_new),
+    );
+  }
 
+  Future<void> _launchLinux() async {
+        const fileExplorer = 'nautilus';
+        final isDirectory = await FileSystemEntity.isDirectory(path);
+        final workingDir =
+            isDirectory ? path : path.justPath();
+
+        final results = await Process.run(
+            fileExplorer,
+            [
+              path,
+            ],
+            workingDirectory: workingDir);
+        
         if (results.exitCode != 0 && (results.stderr.toString().isNotEmpty || results.stdout.toString().isNotEmpty)) {
           debugPrint('Error launching explorer program : exit code ${results.exitCode}');
           if(results.stdout.toString().isNotEmpty)
@@ -35,38 +48,17 @@ class OpenFileExplorerButton extends StatelessWidget {
           {
             debugPrint('stderr: ${results.stderr}');
           }
-        }      
-      },
-      icon: const Icon(Icons.open_in_new),
-    );
-  }
+        }    }
 
-  Future<ProcessResult> _launchLinux() async {
-        const fileExplorer = 'nautilus';
-        final isDirectory = await FileSystemEntity.isDirectory(path);
-        final workingDir =
-            isDirectory ? path : path.justPath();
-
-        return await Process.run(
-            fileExplorer,
-            [
-              path,
-            ],
-            workingDirectory: workingDir);
-  }
-
-  Future<ProcessResult> _launchWindows() async {
+  Future<void> _launchWindows() async {
         const fileExplorer = 'explorer';
         final isDirectory = await FileSystemEntity.isDirectory(path);
         final workingDir =
             isDirectory ? path : path.justPath();
 
-        //windows won't reliably open explorer and select file - so just open to the folder
-        return await Process.run(
-            fileExplorer,
-            [
-              workingDir,
-            ],
-            workingDirectory: workingDir);
+        final proc = await Process.start("cmd", [], workingDirectory: workingDir, runInShell: true);
+        proc.stdin.writeln('$fileExplorer /select,"$path"');
+        debugPrint('proc id = ${proc.pid}');
+        proc.stdin.writeln('exit');
   }
 }
