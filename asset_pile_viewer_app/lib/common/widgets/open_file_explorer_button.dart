@@ -12,9 +12,9 @@ class OpenFileExplorerButton extends StatelessWidget {
     return IconButton(
       tooltip: 'Open explorer to $path',
       onPressed: () async {
-        if(Platform.isLinux || Platform.operatingSystem == 'linux') {
+        if (Platform.isLinux || Platform.operatingSystem == 'linux') {
           await _launchLinux();
-        } else if(Platform.isWindows){
+        } else if (Platform.isWindows) {
           await _launchWindows();
         } else {
           debugPrint(
@@ -26,39 +26,37 @@ class OpenFileExplorerButton extends StatelessWidget {
   }
 
   Future<void> _launchLinux() async {
-        const fileExplorer = 'nautilus';
-        final isDirectory = await FileSystemEntity.isDirectory(path);
-        final workingDir =
-            isDirectory ? path : path.justPath();
+    final isDirectory = await FileSystemEntity.isDirectory(path);
+    final workingDir = isDirectory ? path : path.justPath();
 
-        final results = await Process.run(
-            fileExplorer,
-            [
-              path,
-            ],
-            workingDirectory: workingDir);
-        
-        if (results.exitCode != 0 && (results.stderr.toString().isNotEmpty || results.stdout.toString().isNotEmpty)) {
-          debugPrint('Error launching explorer program : exit code ${results.exitCode}');
-          if(results.stdout.toString().isNotEmpty)
-          {
-            debugPrint('stdout: ${results.stdout}');
-          }
-          if(results.stdout.toString().isNotEmpty)
-          {
-            debugPrint('stderr: ${results.stderr}');
-          }
-        }    }
+    final results = await Process.run(
+        'nautilus',
+        [
+          path,
+        ],
+        workingDirectory: workingDir);
+
+    if (results.exitCode != 0 &&
+        (results.stderr.toString().isNotEmpty ||
+            results.stdout.toString().isNotEmpty)) {
+      debugPrint(
+          'Error launching explorer program : exit code ${results.exitCode}');
+      if (results.stdout.toString().isNotEmpty) {
+        debugPrint('stdout: ${results.stdout}');
+      }
+      if (results.stdout.toString().isNotEmpty) {
+        debugPrint('stderr: ${results.stderr}');
+      }
+    }
+  }
 
   Future<void> _launchWindows() async {
-        const fileExplorer = 'explorer';
-        final isDirectory = await FileSystemEntity.isDirectory(path);
-        final workingDir =
-            isDirectory ? path : path.justPath();
+    final isDirectory = await FileSystemEntity.isDirectory(path);
+    final workingDir = isDirectory ? path : path.justPath();
 
-        final proc = await Process.start("cmd", [], workingDirectory: workingDir, runInShell: true);
-        proc.stdin.writeln('$fileExplorer /select,"$path"');
-        debugPrint('proc id = ${proc.pid}');
-        proc.stdin.writeln('exit');
+    final proc = await Process.start('cmd', [],
+        workingDirectory: workingDir, runInShell: true);
+    proc.stdin.writeln('explorer /select,"$path"');
+    proc.stdin.writeln('exit');
   }
 }
