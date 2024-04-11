@@ -128,7 +128,6 @@ class _FileDetailDisplayState extends ConsumerState<FileDetailDisplay> {
               ),
             ),
           ),
-          OpenFileExplorerButton(path: selectedFilePath.justPath()),
         ],
       ),
       const Divider(),

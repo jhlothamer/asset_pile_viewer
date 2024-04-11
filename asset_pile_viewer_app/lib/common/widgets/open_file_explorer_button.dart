@@ -12,34 +12,51 @@ class OpenFileExplorerButton extends StatelessWidget {
     return IconButton(
       tooltip: 'Open explorer to $path',
       onPressed: () async {
-        var fileExplorer = '';
-        if (Platform.isWindows) {
-          fileExplorer = 'explorer';
-        } else if (Platform.isLinux || Platform.operatingSystem == 'linux') {
-          fileExplorer = 'nautilus';
+        if (Platform.isLinux || Platform.operatingSystem == 'linux') {
+          await _launchLinux();
+        } else if (Platform.isWindows) {
+          await _launchWindows();
         } else {
           debugPrint(
               'Launching explorer for OS "${Platform.operatingSystem}" is not currently supported.');
-          return;
-        }
-
-        final workingDir =
-            FileSystemEntity.isDirectorySync(path) ? path : path.justPath();
-
-        final results = await Process.run(
-            fileExplorer,
-            [
-              path,
-            ],
-            workingDirectory: workingDir);
-
-        if (results.exitCode != 0) {
-          debugPrint('Error launching explorer program "$fileExplorer"');
-          debugPrint('${results.stdout}');
-          debugPrint('${results.stderr}');
         }
       },
       icon: const Icon(Icons.open_in_new),
     );
+  }
+
+  Future<void> _launchLinux() async {
+    final isDirectory = await FileSystemEntity.isDirectory(path);
+    final workingDir = isDirectory ? path : path.justPath();
+
+    final results = await Process.run(
+        'nautilus',
+        [
+          path,
+        ],
+        workingDirectory: workingDir);
+
+    if (results.exitCode != 0 &&
+        (results.stderr.toString().isNotEmpty ||
+            results.stdout.toString().isNotEmpty)) {
+      debugPrint(
+          'Error launching explorer program : exit code ${results.exitCode}');
+      if (results.stdout.toString().isNotEmpty) {
+        debugPrint('stdout: ${results.stdout}');
+      }
+      if (results.stdout.toString().isNotEmpty) {
+        debugPrint('stderr: ${results.stderr}');
+      }
+    }
+  }
+
+  Future<void> _launchWindows() async {
+    final isDirectory = await FileSystemEntity.isDirectory(path);
+    final workingDir = isDirectory ? path : path.justPath();
+
+    final proc = await Process.start('cmd', [],
+        workingDirectory: workingDir, runInShell: true);
+    proc.stdin.writeln('explorer /select,"$path"');
+    proc.stdin.writeln('exit');
   }
 }
