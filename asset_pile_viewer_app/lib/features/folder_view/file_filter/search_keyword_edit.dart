@@ -44,8 +44,8 @@ class _SearchKeywordEditState extends ConsumerState<SearchKeywordEdit> {
     _controller.setSelectedOptions(selectedItems);
 
     final theme = Theme.of(context);
-    final backgroundColor = theme.primaryColor;
-    final selectedOptionColor = theme.secondaryHeaderColor;
+    final backgroundColor = theme.colorScheme.background;
+    final selectedOptionColor = theme.colorScheme.onBackground; //secondary
 
     return MultiSelectDropDown<String>(
       key: const Key('Keyword Filter'),
@@ -66,11 +66,17 @@ class _SearchKeywordEditState extends ConsumerState<SearchKeywordEdit> {
       options: items,
       selectedOptions: selectedItems,
       selectionType: SelectionType.multi,
-      chipConfig: const ChipConfig(wrapType: WrapType.wrap),
+      chipConfig: ChipConfig(
+        wrapType: WrapType.wrap,
+        backgroundColor: backgroundColor,
+        labelColor: selectedOptionColor,
+        deleteIconColor: selectedOptionColor,
+      ),
       fieldBackgroundColor: Colors.transparent,
       optionsBackgroundColor: Colors.transparent,
       dropdownBackgroundColor: backgroundColor,
       selectedOptionBackgroundColor: selectedOptionColor,
+      selectedOptionTextColor: backgroundColor,
     );
   }
 }

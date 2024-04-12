@@ -20,7 +20,7 @@ Image getImage(BuildContext context, String filePath) {
 
   return Image.file(
     File(filePath),
-    fit: BoxFit.fitWidth,
+    fit: BoxFit.contain,
     filterQuality: FilterQuality.none,
     cacheHeight: 256,
     cacheWidth: 256,
