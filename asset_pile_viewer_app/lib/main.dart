@@ -1,3 +1,4 @@
+import 'package:assetPileViewer/common/providers/theme_provider.dart';
 import 'package:assetPileViewer/data/db_util.dart';
 import 'package:assetPileViewer/common/routes.dart';
 import 'package:assetPileViewer/common/providers/shared_prefs_provider.dart';
@@ -27,10 +28,16 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final currentTheme = ref.watch(themeProvider);
+
+    final theme = currentTheme == AppTheme.light
+        ? ThemeData.light(useMaterial3: true)
+        : ThemeData.dark(useMaterial3: true);
+
     return MaterialApp(
       title: 'Asset Manager',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark(useMaterial3: true).copyWith(
+      theme: theme.copyWith(
         scrollbarTheme: const ScrollbarThemeData(
           thumbVisibility: MaterialStatePropertyAll<bool>(true),
         ),
