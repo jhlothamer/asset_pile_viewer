@@ -45,7 +45,7 @@ class _SearchKeywordEditState extends ConsumerState<SearchKeywordEdit> {
 
     final theme = Theme.of(context);
     final backgroundColor = theme.colorScheme.background;
-    final selectedOptionColor = theme.colorScheme.onBackground; //secondary
+    final selectedOptionColor = theme.colorScheme.onBackground;
 
     return MultiSelectDropDown<String>(
       key: const Key('Keyword Filter'),
