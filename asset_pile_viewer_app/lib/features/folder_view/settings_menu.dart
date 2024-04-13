@@ -1,3 +1,4 @@
+import 'package:assetPileViewer/common/providers/app_version_provider.dart';
 import 'package:assetPileViewer/common/providers/theme_provider.dart';
 import 'package:assetPileViewer/features/about/about.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ class SettingsMenu extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentTheme = ref.watch(themeProvider);
+    final appVersion = ref.watch(appVersionProvider);
     return MenuAnchor(
       builder: (context, controller, child) {
         return IconButton(
@@ -34,7 +36,7 @@ class SettingsMenu extends ConsumerWidget {
         ),
         MenuItemButton(
           onPressed: () {
-            showAbout(context);
+            showAbout(context, appVersion);
           },
           leadingIcon: const Icon(Icons.info),
           child: const Text('About'),

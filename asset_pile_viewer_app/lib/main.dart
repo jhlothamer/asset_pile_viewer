@@ -1,4 +1,6 @@
+import 'package:assetPileViewer/common/providers/app_version_provider.dart';
 import 'package:assetPileViewer/common/providers/theme_provider.dart';
+import 'package:assetPileViewer/common/version_info.dart';
 import 'package:assetPileViewer/data/db_util.dart';
 import 'package:assetPileViewer/common/routes.dart';
 import 'package:assetPileViewer/common/providers/shared_prefs_provider.dart';
@@ -6,17 +8,24 @@ import 'package:assetPileViewer/data/asset_pile_viewer_db_schema.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await initDbFilePath();
   final assetPileViewerDbSchema = AssetPileViewerDbSchema(dbFilepath);
   assetPileViewerDbSchema.update();
   final sharedPreferences = await SharedPreferences.getInstance();
+  final packageInfo = await PackageInfo.fromPlatform();
+
   runApp(
     ProviderScope(
       overrides: [
-        sharedPreferencesProvider.overrideWithValue(sharedPreferences)
+        sharedPreferencesProvider.overrideWithValue(sharedPreferences),
+        appVersionProvider.overrideWithValue(
+          VersionInfo.fromString(packageInfo.version),
+        )
       ],
       child: const MyApp(),
     ),
