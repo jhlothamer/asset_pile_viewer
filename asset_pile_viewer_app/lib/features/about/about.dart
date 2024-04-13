@@ -1,4 +1,4 @@
-import 'package:assetPileViewer/common/app_version.dart';
+import 'package:assetPileViewer/common/version_info.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/material.dart';
@@ -35,7 +35,13 @@ void _launchSourceCodeUrl() {
   launchUrlString(_githubUrl);
 }
 
-void showAbout(BuildContext context) {
+void showAbout(BuildContext context, VersionInfo appVersion) {
+  final normalTextStyle = Theme.of(context)
+      .primaryTextTheme
+      .labelLarge!
+      .copyWith(color: Theme.of(context).colorScheme.onBackground);
+  const linkTextStyle =
+      TextStyle(color: Colors.blue, decoration: TextDecoration.underline);
   showAboutDialog(
     context: context,
     applicationName: 'Asset Pile Viewer',
@@ -48,11 +54,13 @@ void showAbout(BuildContext context) {
       ),
       RichText(
         text: TextSpan(children: [
-          const TextSpan(text: 'This software is licensed under '),
+          TextSpan(
+            text: 'This software is licensed under ',
+            style: normalTextStyle,
+          ),
           TextSpan(
               text: 'GNU General Public License V3',
-              style: const TextStyle(
-                  color: Colors.blue, decoration: TextDecoration.underline),
+              style: linkTextStyle,
               recognizer: TapGestureRecognizer()
                 ..onTap = () => _showLicenseDialog(context)),
           const TextSpan(text: '.'),
@@ -62,8 +70,11 @@ void showAbout(BuildContext context) {
         height: 20,
       ),
       RichText(
-        text: const TextSpan(children: [
-          TextSpan(text: 'A copy of the source code can be obtained at '),
+        text: TextSpan(children: [
+          TextSpan(
+            text: 'A copy of the source code can be obtained at ',
+            style: normalTextStyle,
+          ),
         ]),
       ),
       const SizedBox(
@@ -73,8 +84,7 @@ void showAbout(BuildContext context) {
         text: TextSpan(children: [
           TextSpan(
               text: _githubUrl,
-              style: const TextStyle(
-                  color: Colors.blue, decoration: TextDecoration.underline),
+              style: linkTextStyle,
               recognizer: TapGestureRecognizer()..onTap = _launchSourceCodeUrl),
         ]),
       ),
@@ -84,9 +94,11 @@ void showAbout(BuildContext context) {
       SizedBox(
         width: _contentWidth,
         child: RichText(
-          text: const TextSpan(
-              text:
-                  'To view packages used by this software and their licenses, click the View Licenses button below.'),
+          text: TextSpan(
+            text:
+                'To view packages used by this software and their licenses, click the View Licenses button below.',
+            style: normalTextStyle,
+          ),
         ),
       ),
     ],
