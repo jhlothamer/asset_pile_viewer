@@ -7,14 +7,12 @@ Features include:
   * Previewing all supported assets under a selected folder (see supported file formats below)
   * Adding keywords to folders and files
   * Filter assets by file name and keywords
-  * Supports Windows and Linux.
-
+  * Light and dark mode
+  * Supports Windows and Linux
 
 <p align="center">
 <img src="readme_images/screenshot.png" />
 </p>
-
-
 
 ## Supported File Formats
 The following file formats are currently supported:
@@ -35,7 +33,6 @@ There are issues with full support for the following file formats.
   * Rating - Add a rating to a file or folder.  Allow filtering on rating.
   * List view - Support a list view and allow toggling between grid and list views.
   * Sorting - Allow user to change sorting.
-  * Light/Dark mode - Allow toggling between a light and dark mode.
 
 ## Features, Issues
 Found a bug or want a new feature?  Please create a new issue [on the Issues tab](https://github.com/jhlothamer/asset_pile_viewer/issues).

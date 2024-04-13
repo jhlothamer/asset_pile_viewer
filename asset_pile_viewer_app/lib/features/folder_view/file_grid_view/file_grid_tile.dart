@@ -151,7 +151,7 @@ class _FileGridTileState extends ConsumerState<FileGridTile> {
           } else {
             widget.audioPlayer.play(DeviceFileSource(widget.fileInfo.path));
             // listen for player state change
-            _playerStateChangedSub = widget.audioPlayer.onPlayerStateChanged
+            _playerStateChangedSub ??= widget.audioPlayer.onPlayerStateChanged
                 .listen(_onPlayerStateChanged);
           }
 
