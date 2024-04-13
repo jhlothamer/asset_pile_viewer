@@ -88,10 +88,13 @@ class _FileGridTileState extends ConsumerState<FileGridTile> {
           message: widget.fileInfo.name,
           child: GridTileBar(
             title: Container(
-              color: Theme.of(context).canvasColor,
+              color: Theme.of(context).colorScheme.inverseSurface,
               child: Text(
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.labelLarge,
+                style: Theme.of(context)
+                    .textTheme
+                    .labelLarge!
+                    .copyWith(color: Theme.of(context).colorScheme.background),
                 widget.fileInfo.name,
               ),
             ),
@@ -100,7 +103,7 @@ class _FileGridTileState extends ConsumerState<FileGridTile> {
         child: Container(
           color: selected
               ? Theme.of(context).focusColor
-              : Theme.of(context).colorScheme.shadow,
+              : Theme.of(context).colorScheme.background,
           child: inner,
         ),
       ),
@@ -124,7 +127,9 @@ class _FileGridTileState extends ConsumerState<FileGridTile> {
       case FileType.sound:
         return _createSoundInner();
       case _:
-        return Center(child: Text('.${widget.fileInfo.name.extension()}'),);
+        return Center(
+          child: Text('.${widget.fileInfo.name.extension()}'),
+        );
     }
   }
 

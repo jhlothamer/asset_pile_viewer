@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:assetPileViewer/common/providers/theme_provider.dart'
+    as ThemeProvider;
 import 'package:assetPileViewer/common/util/path.dart';
 import 'package:assetPileViewer/common/util/string_extensions.dart';
 import 'package:assetPileViewer/common/widgets/images.dart';
@@ -192,12 +194,22 @@ class _FileDetailDisplayState extends ConsumerState<FileDetailDisplay> {
 
     img = getImage(context, selectedFilePath);
 
+    final currentTheme = ref.read(ThemeProvider.themeProvider);
+    final imageViewerBackgroundColor =
+        currentTheme == ThemeProvider.AppTheme.light
+            ? Colors.white
+            : Colors.black;
+
     return [
       const SizedBox(height: 8),
       const Divider(),
       GestureDetector(
         onTap: () {
-          showImageViewer(context, img!.image);
+          showImageViewer(
+            context,
+            img!.image,
+            backgroundColor: imageViewerBackgroundColor,
+          );
         },
         child: img,
       ),

@@ -62,6 +62,7 @@ class _AudioPlayerScrubCtrlState extends State<AudioPlayerScrubCtrl> {
   @override
   Widget build(BuildContext context) {
     return Slider(
+      activeColor: Theme.of(context).colorScheme.onBackground,
       onChanged: !_hasSource
           ? null
           : (value) {

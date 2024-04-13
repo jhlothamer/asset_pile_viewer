@@ -4,6 +4,7 @@ import 'package:assetPileViewer/features/folder_view/file_filter/file_filter.dar
 import 'package:assetPileViewer/features/folder_view/file_grid_view/file_grid_view.dart';
 import 'package:assetPileViewer/features/folder_view/file_details/file_detail_display.dart';
 import 'package:assetPileViewer/features/folder_view/folder_view/folder_view.dart';
+import 'package:assetPileViewer/features/folder_view/settings_menu.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:split_view/split_view.dart';
@@ -83,14 +84,8 @@ class _FolderViewPageState extends State<FolderViewPage> {
           ),
           Container(
             alignment: Alignment.topRight,
-            child: IconButton(
-              onPressed: () {
-                showAbout(context);
-              },
-              tooltip: 'About',
-              icon: const Icon(Icons.info),
-            ),
-          ),
+            child: const SettingsMenu(),
+          )
         ],
       ),
     );
