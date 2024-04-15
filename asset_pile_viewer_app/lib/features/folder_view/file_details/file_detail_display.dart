@@ -39,7 +39,7 @@ class _FileDetailDisplayState extends ConsumerState<FileDetailDisplay> {
 
     if (selectedFilePath.isEmpty) {
       return const Center(
-        child: Text('Please select a file'),
+        child: Text('Please select a file for details'),
       );
     }
 

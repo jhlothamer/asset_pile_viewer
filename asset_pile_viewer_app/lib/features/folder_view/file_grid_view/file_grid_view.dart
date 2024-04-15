@@ -111,7 +111,7 @@ class _FileGridViewState extends ConsumerState<FileGridView> {
     String folderString = selectedFolder;
     final rootFolder = assetRootFolder.justPath();
     if (folderString.isEmpty) {
-      folderString = 'Please select a folder';
+      folderString = '';
     } else if (folderString != rootFolder) {
       folderString =
           'Showing files for: ${folderString.substring(rootFolder.length + 1)}';
