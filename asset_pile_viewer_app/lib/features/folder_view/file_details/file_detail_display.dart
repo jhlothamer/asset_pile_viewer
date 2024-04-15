@@ -203,11 +203,13 @@ class _FileDetailDisplayState extends ConsumerState<FileDetailDisplay> {
     return [
       const SizedBox(height: 8),
       const Divider(),
+      const Text('Preview (click to enlarge)'),
       GestureDetector(
         onTap: () {
+          final fullImage = Image.file(File(selectedFilePath));
           showImageViewer(
             context,
-            img!.image,
+            fullImage.image,
             backgroundColor: imageViewerBackgroundColor,
           );
         },
