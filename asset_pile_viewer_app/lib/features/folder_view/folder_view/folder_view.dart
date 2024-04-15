@@ -61,7 +61,7 @@ class _FolderViewState extends ConsumerState<FolderView> {
             data: (data) {
               if (rootFolder.isEmpty) {
                 return const Center(
-                  child: Text('Please select an asset folder'),
+                  child: Text(''),
                 );
               }
               _initTreeController(rootFolder, data);

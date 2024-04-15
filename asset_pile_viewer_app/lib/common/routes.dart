@@ -1,5 +1,7 @@
 import 'package:assetPileViewer/data/asset_pile_viewer_db_schema.dart';
+import 'package:assetPileViewer/features/first_run/first_run_page.dart';
 import 'package:assetPileViewer/features/folder_view/folder_view_page.dart';
+import 'package:assetPileViewer/features/folder_view/providers/asset_root_folder_provider.dart';
 import 'package:assetPileViewer/features/unsupported_db_version/unsupported_db_version_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,6 +15,10 @@ class AppRoutes {
     '/': (_, ref) {
       if (dbSchemaVersionUnsupported) {
         return const UnsupportedDbVersionPage();
+      }
+      final assetRootFolder = ref.read(assetRootFolderProvider);
+      if (assetRootFolder.isEmpty) {
+        return const FirstRunPage();
       }
       return const FolderViewPage();
     },
