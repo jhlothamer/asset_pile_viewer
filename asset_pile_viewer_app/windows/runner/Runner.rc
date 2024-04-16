@@ -93,7 +93,7 @@ BEGIN
             VALUE "FileDescription", "assetPileViewer" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "assetPileViewer" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2023 org.assetpileviewer. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2024 Jason Lothamer. All rights reserved." "\0"
             VALUE "OriginalFilename", "assetPileViewer.exe" "\0"
             VALUE "ProductName", "assetPileViewer" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
