@@ -80,7 +80,6 @@ class _FileGridViewState extends ConsumerState<FileGridView> {
                 folderString,
                 style: Theme.of(context).textTheme.labelLarge,
               ),
-              const PlayListToggleButton(),
               const SortOrderToggleButton(),
             ],
           ),
