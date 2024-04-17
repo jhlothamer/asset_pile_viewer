@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:assetPileViewer/common/widgets/audioplayer/playlist_toggle_button.dart';
 import 'package:assetPileViewer/features/folder_view/providers/audio_playlist_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/playlist_toggle_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/selected_file_provider.dart';
@@ -135,6 +136,7 @@ class _AudioPlayerButtonsState extends ConsumerState<AudioPlayerButtons> {
             Repeat.all => const Icon(Icons.repeat_on),
           },
         ),
+        const PlayListToggleButton(),
       ],
     );
   }
