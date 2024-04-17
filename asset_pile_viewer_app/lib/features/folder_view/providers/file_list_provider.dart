@@ -7,6 +7,7 @@ import 'package:assetPileViewer/features/folder_view/providers/asset_root_folder
 import 'package:assetPileViewer/features/folder_view/providers/directory_tree_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/selected_folder_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/show_hidden_folders_provider.dart';
+import 'package:assetPileViewer/features/folder_view/providers/sort_order_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'file_list_provider.g.dart';
@@ -57,8 +58,11 @@ class FileList extends _$FileList {
     final collectedFiles = selectedNode.collectFiles(assetDirectories,
         assetFiles, collectedFileKeywords, inheritedKeywords, showHidden);
 
+    final sortOrder = ref.watch(sortOrderProvider);
+    final sortFactor = sortOrder == SortDirection.ascending ? 1 : -1;
+
     collectedFiles.sort(
-      (a, b) => a.name.compareTo(b.name),
+      (a, b) => a.name.compareTo(b.name) * sortFactor,
     );
 
     return FileListInfo(
