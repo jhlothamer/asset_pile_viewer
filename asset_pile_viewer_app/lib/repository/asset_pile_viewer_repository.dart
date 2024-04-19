@@ -201,4 +201,82 @@ class AssetPileViewerRepository {
 
     return assetFile.copyWith(id: id);
   }
+
+  List<AssetList> getAssetLists() {
+    var resultSet = _db.select('select id, name from lists order by name');
+
+    final lists = <AssetList>[];
+
+    for (final row in resultSet) {
+      lists.add(
+        AssetList(
+          id: row['id'],
+          name: row['name'],
+        ),
+      );
+    }
+
+    return lists;
+  }
+
+  List<AssetListFile> getAssetListFiles(int listId) {
+    var resultSet = _db.select(
+        'select id, list_id, path from list_files where list_id = ? order by path',
+        [listId]);
+
+    final lists = <AssetListFile>[];
+
+    for (final row in resultSet) {
+      lists.add(
+        AssetListFile(
+          id: row['id'],
+          listId: row['list_id'],
+          path: row['path'],
+        ),
+      );
+    }
+
+    return lists;
+  }
+
+  AssetList saveAssetList(AssetList list) {
+    if (list.id != 0) {
+      _db.execute(
+          'update lists set name = ? where id = ?', [list.name, list.id]);
+      return list;
+    }
+    _db.execute(
+        'insert into lists (name) '
+        'values(?) ',
+        [
+          list.name,
+        ]);
+
+    return list.copyWith(id: _db.lastInsertRowId);
+  }
+
+  void deleteAssetList(AssetList list) {
+    _db.execute('delete lists where id = ?', [list.id]);
+  }
+
+  AssetListFile saveAssetListFile(AssetListFile file) {
+    if (file.id != 0) {
+      _db.execute('update list_files set path = ?, list_id = ? where id = ?',
+          [file.path, file.listId, file.id]);
+      return file;
+    }
+    _db.execute(
+        'insert into list_files (list_id, path) '
+        'values(?) ',
+        [
+          file.listId,
+          file.path,
+        ]);
+
+    return file.copyWith(id: _db.lastInsertRowId);
+  }
+
+  void deleteAssetListFile(AssetListFile file) {
+    _db.execute('delete list_files where id = ?', [file.id]);
+  }
 }

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:assetPileViewer/common/version_info.dart';
 import 'package:sqlite3/sqlite3.dart';
 
-final currentSchemaVersion = VersionInfo(major: 0, minor: 1, patch: 0);
+final currentSchemaVersion = VersionInfo(major: 0, minor: 2, patch: 0);
 VersionInfo? foundSchemaVersion;
 bool dbSchemaVersionUnsupported = false;
 
@@ -55,7 +55,7 @@ class AssetPileViewerDbSchema {
     final currentDbVersion = allTableNames.contains('db_version_history')
         ? _getDbVersion(db)
         : VersionInfo.empty();
-    if (currentDbVersion == schemaVersion) {
+    if (currentDbVersion >= schemaVersion) {
       return;
     }
     _ensureTables(
@@ -105,6 +105,38 @@ class AssetPileViewerDbSchema {
     _insertDbVersion(db, schemaVersion);
   }
 
+  void _ensureSchemaVersion0_2_0(Database db, List<String> allTableNames) {
+    final schemaVersion = VersionInfo(major: 0, minor: 2, patch: 0);
+    final currentDbVersion = allTableNames.contains('db_version_history')
+        ? _getDbVersion(db)
+        : VersionInfo.empty();
+    if (currentDbVersion >= schemaVersion) {
+      return;
+    }
+
+    _ensureTables(
+      db,
+      allTableNames,
+      {
+        'lists': 'CREATE TABLE "lists" ( '
+            '   "id"  INTEGER NOT NULL, '
+            '   "name"   TEXT NOT NULL UNIQUE, '
+            '   PRIMARY KEY("id" AUTOINCREMENT) '
+            ')',
+        'list_files': 'CREATE TABLE "list_files" ( '
+            '   "id"  INTEGER NOT NULL, '
+            '   "list_id"   INTEGER NOT NULL, '
+            '   "path"   TEXT NOT NULL, '
+            '   FOREIGN KEY("list_id") REFERENCES "lists"("id") ON DELETE CASCADE, '
+            '   PRIMARY KEY("id" AUTOINCREMENT), '
+            '   UNIQUE("list_id","path") '
+            ') ',
+      },
+    );
+
+    _insertDbVersion(db, schemaVersion);
+  }
+
   bool _isDbNewerVersion(Database db, List<String> allTableNames) {
     if (!allTableNames.contains('db_version_history')) {
       return false;
@@ -133,6 +165,7 @@ class AssetPileViewerDbSchema {
     }
 
     _ensureSchemaVersion0_1_0(db, allTableNames);
+    _ensureSchemaVersion0_2_0(db, allTableNames);
   }
 
   //recreates db file with schema. WARNING!  EXISTING DATA LOST!
