@@ -1,3 +1,5 @@
+import 'package:assetPileViewer/common/widgets/selected_widget_controller.dart';
+import 'package:assetPileViewer/features/folder_view/asset_list_view/asset_list_tile.dart';
 import 'package:assetPileViewer/features/folder_view/providers/asset_lists_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,6 +14,7 @@ class AssetListsView extends ConsumerStatefulWidget {
 class _AssetListViewState extends ConsumerState<AssetListsView> {
   final _newListTextEditingController = TextEditingController();
   final _focusNode = FocusNode();
+  final _selectedWidgetController = SelectedWidgetController();
   @override
   Widget build(BuildContext context) {
     final assetLists = ref.watch(assetListsProvider);
@@ -45,13 +48,17 @@ class _AssetListViewState extends ConsumerState<AssetListsView> {
           ),
         ),
         Expanded(
-          child: ListView.builder(
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(assetLists[index].name),
-              );
-            },
-            itemCount: assetLists.length,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ListView.builder(
+              itemBuilder: (context, index) {
+                return AssetListTile(
+                    key: Key(assetLists[index].id.toString()),
+                    assetList: assetLists[index],
+                    controller: _selectedWidgetController);
+              },
+              itemCount: assetLists.length,
+            ),
           ),
         ),
       ],

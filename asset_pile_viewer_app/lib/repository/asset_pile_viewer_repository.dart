@@ -256,7 +256,7 @@ class AssetPileViewerRepository {
   }
 
   void deleteAssetList(AssetList list) {
-    _db.execute('delete lists where id = ?', [list.id]);
+    _db.execute('delete from lists where id = ?', [list.id]);
   }
 
   AssetListFile saveAssetListFile(AssetListFile file) {
@@ -277,6 +277,6 @@ class AssetPileViewerRepository {
   }
 
   void deleteAssetListFile(AssetListFile file) {
-    _db.execute('delete list_files where id = ?', [file.id]);
+    _db.execute('delete from list_files where id = ?', [file.id]);
   }
 }

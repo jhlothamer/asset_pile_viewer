@@ -31,20 +31,12 @@ class AssetLists extends _$AssetLists {
     return newList;
   }
 
-  AssetList updateList(AssetList list) {
-    if (list.id == 0) {
-      return addList(list.name);
-    }
-
+  bool updateList(AssetList list) {
     final listWithSameName =
         state.where((l) => l.name == list.name && l.id != list.id).firstOrNull;
 
     if (listWithSameName != null) {
-      final existingList = state.where((l) => l.id == list.id).firstOrNull;
-      if (existingList == null) {
-        throw 'A list with name ${list.name} exists but updated list not in state list!  id:${list.id}';
-      }
-      return existingList;
+      return false;
     }
 
     final assetPileViewerRepo = ref.read(assetPileViewerRepoProvider);
@@ -54,6 +46,13 @@ class AssetLists extends _$AssetLists {
     newState.sort((a, b) => a.name.compareTo(b.name));
     state = newState;
 
-    return list;
+    return true;
+  }
+
+  void deleteList(AssetList list) {
+    final assetPileViewerRepo = ref.read(assetPileViewerRepoProvider);
+    assetPileViewerRepo.deleteAssetList(list);
+    final newState = [...state.where((l) => l.id != list.id)];
+    state = newState;
   }
 }
