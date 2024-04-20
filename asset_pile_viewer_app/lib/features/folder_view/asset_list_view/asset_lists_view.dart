@@ -11,12 +11,20 @@ class AssetListsView extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _AssetListViewState();
 }
 
-class _AssetListViewState extends ConsumerState<AssetListsView> {
+class _AssetListViewState extends ConsumerState<AssetListsView>
+    with AutomaticKeepAliveClientMixin {
   final _newListTextEditingController = TextEditingController();
   final _focusNode = FocusNode();
   final _selectedWidgetController = SelectedWidgetController();
   @override
+  void dispose() {
+    _selectedWidgetController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     final assetLists = ref.watch(assetListsProvider);
     return Column(
       children: [
@@ -64,4 +72,7 @@ class _AssetListViewState extends ConsumerState<AssetListsView> {
       ],
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

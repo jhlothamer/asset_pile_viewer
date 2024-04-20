@@ -21,12 +21,20 @@ class _AssetListTileState extends ConsumerState<AssetListTile> {
   bool _hovered = false;
   @override
   void initState() {
-    widget.controller.addListener(() {
-      setState(() {
-        _selected = widget.controller.has(widget);
-      });
-    });
+    widget.controller.addListener(_selectedWidgetControllerChanged);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_selectedWidgetControllerChanged);
+    super.dispose();
+  }
+
+  void _selectedWidgetControllerChanged() {
+    setState(() {
+      _selected = widget.controller.has(widget);
+    });
   }
 
   @override

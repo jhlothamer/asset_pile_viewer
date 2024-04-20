@@ -20,7 +20,8 @@ class FolderView extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _FolderViewState();
 }
 
-class _FolderViewState extends ConsumerState<FolderView> {
+class _FolderViewState extends ConsumerState<FolderView>
+    with AutomaticKeepAliveClientMixin {
   TreeController<DirectoryNode>? _treeController;
   final SelectedWidgetController _tileController = SelectedWidgetController();
   Map<String, AssetDirectory>? assetDirectories;
@@ -45,6 +46,7 @@ class _FolderViewState extends ConsumerState<FolderView> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final rootFolder = ref.watch(assetRootFolderProvider);
     final results = ref.watch(directoryTreeProvider);
     assetDirectories = ref.watch(assetDirectoriesProvider);
@@ -164,4 +166,7 @@ class _FolderViewState extends ConsumerState<FolderView> {
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
