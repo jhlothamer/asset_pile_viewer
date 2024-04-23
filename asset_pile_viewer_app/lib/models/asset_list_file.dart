@@ -4,11 +4,13 @@ part 'asset_list_file.freezed.dart';
 
 @freezed
 class AssetListFile with _$AssetListFile {
-  const factory AssetListFile(
-      {required int id,
-      required int listId,
-      required String path}) = _AssetListFile;
+  const factory AssetListFile({
+    required int id,
+    required int listId,
+    required int fileId,
+    required String path,
+  }) = _AssetListFile;
   factory AssetListFile.newAssetListFile(
-          {required int listId, required String path}) =>
-      AssetListFile(id: 0, listId: listId, path: path);
+          {required int listId, required int fileId, required String path}) =>
+      AssetListFile(id: 0, listId: listId, fileId: fileId, path: path);
 }

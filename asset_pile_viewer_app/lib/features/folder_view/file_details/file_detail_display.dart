@@ -11,6 +11,7 @@ import 'package:assetPileViewer/features/folder_view/file_details/audio_file_det
 import 'package:assetPileViewer/features/folder_view/folder_view/directory_node.dart';
 import 'package:assetPileViewer/features/folder_view/providers/asset_directories_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/asset_files_provider.dart';
+import 'package:assetPileViewer/features/folder_view/providers/asset_lists_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/asset_root_folder_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/directory_tree_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/keywords_provider.dart';
@@ -36,6 +37,7 @@ class _FileDetailDisplayState extends ConsumerState<FileDetailDisplay> {
     final assetRootFolder = ref.watch(assetRootFolderProvider);
     final selectedFilePath = ref.watch(selectedFileProvider);
     final rootNode = ref.watch(directoryTreeProvider).value;
+    final assetLists = ref.watch(assetListsProvider);
 
     if (selectedFilePath.isEmpty) {
       return const Center(
@@ -86,7 +88,8 @@ class _FileDetailDisplayState extends ConsumerState<FileDetailDisplay> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  ..._getDetails(selectedFilePath, assetRootFolder, rootNode),
+                  ..._getDetails(
+                      selectedFilePath, assetRootFolder, rootNode, assetLists),
                   if (fileType == FileType.texture)
                     ..._getTextureDetails(context, selectedFilePath),
                   if (fileType == FileType.sound)
@@ -100,8 +103,8 @@ class _FileDetailDisplayState extends ConsumerState<FileDetailDisplay> {
     );
   }
 
-  List<Widget> _getDetails(
-      String selectedFilePath, String assetRootFolder, DirectoryNode rootNode) {
+  List<Widget> _getDetails(String selectedFilePath, String assetRootFolder,
+      DirectoryNode rootNode, List<AssetList> assetLists) {
     final assetFile = ref.watch(assetFilesProvider)[selectedFilePath] ??
         AssetFile.newFile(selectedFilePath);
     final relativeFolderPath =
@@ -173,6 +176,35 @@ class _FileDetailDisplayState extends ConsumerState<FileDetailDisplay> {
               .updateKeywords(selectedFilePath, updatedKeywords);
           ref.read(keywordsProvider.notifier).purgeUnused();
         },
+      ),
+      const Divider(),
+      const Row(
+        children: [
+          Text(
+            'Lists:',
+          ),
+        ],
+      ),
+      const SizedBox(
+        height: 5,
+      ),
+      KeywordEdit(
+        controller: KeywordEditorController(
+          assetFile.lists.map((e) => e.name).toList(),
+        ),
+        noun: 'list',
+        onKeywordsAdded: (newList) {
+          final existingNewLists =
+              assetLists.where((l) => newList.any((e) => e == l.name)).toList();
+          if (existingNewLists.isEmpty) {
+            return;
+          }
+          existingNewLists.addAll(assetFile.lists);
+          ref
+              .read(assetFilesProvider.notifier)
+              .updateLists(assetFile.path, existingNewLists);
+        },
+        onKeywordDeleted: (deletedList) {},
       ),
     ];
   }

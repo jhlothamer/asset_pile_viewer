@@ -18,6 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$AssetListFile {
   int get id => throw _privateConstructorUsedError;
   int get listId => throw _privateConstructorUsedError;
+  int get fileId => throw _privateConstructorUsedError;
   String get path => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -31,7 +32,7 @@ abstract class $AssetListFileCopyWith<$Res> {
           AssetListFile value, $Res Function(AssetListFile) then) =
       _$AssetListFileCopyWithImpl<$Res, AssetListFile>;
   @useResult
-  $Res call({int id, int listId, String path});
+  $Res call({int id, int listId, int fileId, String path});
 }
 
 /// @nodoc
@@ -49,6 +50,7 @@ class _$AssetListFileCopyWithImpl<$Res, $Val extends AssetListFile>
   $Res call({
     Object? id = null,
     Object? listId = null,
+    Object? fileId = null,
     Object? path = null,
   }) {
     return _then(_value.copyWith(
@@ -59,6 +61,10 @@ class _$AssetListFileCopyWithImpl<$Res, $Val extends AssetListFile>
       listId: null == listId
           ? _value.listId
           : listId // ignore: cast_nullable_to_non_nullable
+              as int,
+      fileId: null == fileId
+          ? _value.fileId
+          : fileId // ignore: cast_nullable_to_non_nullable
               as int,
       path: null == path
           ? _value.path
@@ -76,7 +82,7 @@ abstract class _$$AssetListFileImplCopyWith<$Res>
       __$$AssetListFileImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, int listId, String path});
+  $Res call({int id, int listId, int fileId, String path});
 }
 
 /// @nodoc
@@ -92,6 +98,7 @@ class __$$AssetListFileImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? listId = null,
+    Object? fileId = null,
     Object? path = null,
   }) {
     return _then(_$AssetListFileImpl(
@@ -102,6 +109,10 @@ class __$$AssetListFileImplCopyWithImpl<$Res>
       listId: null == listId
           ? _value.listId
           : listId // ignore: cast_nullable_to_non_nullable
+              as int,
+      fileId: null == fileId
+          ? _value.fileId
+          : fileId // ignore: cast_nullable_to_non_nullable
               as int,
       path: null == path
           ? _value.path
@@ -115,18 +126,23 @@ class __$$AssetListFileImplCopyWithImpl<$Res>
 
 class _$AssetListFileImpl implements _AssetListFile {
   const _$AssetListFileImpl(
-      {required this.id, required this.listId, required this.path});
+      {required this.id,
+      required this.listId,
+      required this.fileId,
+      required this.path});
 
   @override
   final int id;
   @override
   final int listId;
   @override
+  final int fileId;
+  @override
   final String path;
 
   @override
   String toString() {
-    return 'AssetListFile(id: $id, listId: $listId, path: $path)';
+    return 'AssetListFile(id: $id, listId: $listId, fileId: $fileId, path: $path)';
   }
 
   @override
@@ -136,11 +152,12 @@ class _$AssetListFileImpl implements _AssetListFile {
             other is _$AssetListFileImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.listId, listId) || other.listId == listId) &&
+            (identical(other.fileId, fileId) || other.fileId == fileId) &&
             (identical(other.path, path) || other.path == path));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, id, listId, path);
+  int get hashCode => Object.hash(runtimeType, id, listId, fileId, path);
 
   @JsonKey(ignore: true)
   @override
@@ -153,12 +170,15 @@ abstract class _AssetListFile implements AssetListFile {
   const factory _AssetListFile(
       {required final int id,
       required final int listId,
+      required final int fileId,
       required final String path}) = _$AssetListFileImpl;
 
   @override
   int get id;
   @override
   int get listId;
+  @override
+  int get fileId;
   @override
   String get path;
   @override

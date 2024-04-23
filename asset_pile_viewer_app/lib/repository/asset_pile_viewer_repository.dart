@@ -1,3 +1,4 @@
+import 'package:assetPileViewer/data/db_batched_execute.dart';
 import 'package:assetPileViewer/data/db_batched_execute_in.dart';
 import 'package:assetPileViewer/models/models.dart';
 import 'package:sqlite3/sqlite3.dart';
@@ -21,6 +22,20 @@ class AssetPileViewerRepository {
     }
 
     return keywords;
+  }
+
+  List<AssetList> _stringToAssetLists(String delimLists) {
+    if (delimLists.isEmpty) {
+      return [];
+    }
+    final lists = <AssetList>[];
+
+    for (final idNameString in delimLists.split(',')) {
+      final idName = idNameString.split('%');
+      lists.add(AssetList(id: int.parse(idName[0]), name: idName[1]));
+    }
+
+    return lists;
   }
 
   List<Keyword> getKeywords() {
@@ -157,19 +172,26 @@ class AssetPileViewerRepository {
         '   select group_concat(k.id || \'%\' || k.name) from '
         '   file_keywords fk inner join keywords k on k.id = fk.keyword_id '
         '   where fk.file_id = f.id '
-        ') delim_keywords '
+        ') delim_keywords, '
+        ' ( select group_concat(l.id || \'%\' || l.name) from '
+        '   list_files lf inner join lists l on l.id = lf.list_id '
+        '   where lf.file_id = f.id '
+        ') delim_lists '
         'from files f');
 
     final files = <AssetFile>[];
 
     for (final row in resultSet) {
       final keywords = _stringToKeywords(row['delim_keywords'] ?? '');
+      final lists = _stringToAssetLists(row['delim_lists'] ?? '');
       files.add(
         AssetFile(
-            id: row['id'],
-            path: row['path'],
-            hidden: row['hidden'] == 1,
-            keywords: keywords),
+          id: row['id'],
+          path: row['path'],
+          hidden: row['hidden'] == 1,
+          keywords: keywords,
+          lists: lists,
+        ),
       );
     }
 
@@ -190,14 +212,24 @@ class AssetPileViewerRepository {
     _db.execute('delete from file_keywords where file_id = ?', [id]);
 
     final keywordNames = assetFile.keywords.map((e) => e.name).toList();
-    final batch = DbBatchedExecuteIn(
+    final keywordInsertBatch = DbBatchedExecuteIn(
         _db,
         'insert into file_keywords '
         '(file_id, keyword_id) '
         'select $id, id from keywords where '
         'name in');
 
-    batch.doBatch(keywordNames);
+    keywordInsertBatch.doBatch(keywordNames);
+
+    _db.execute('delete from list_files where file_id = ?', [id]);
+
+    final listFilesInsertBatch =
+        DbBatchedExecute(_db, 'insert into list_files (list_id, file_id)',
+            sqlParameterFromObject: (AssetList list, _) {
+      return [list.id, id];
+    });
+
+    listFilesInsertBatch.doBatch(assetFile.lists);
 
     return assetFile.copyWith(id: id);
   }
@@ -221,7 +253,9 @@ class AssetPileViewerRepository {
 
   List<AssetListFile> getAssetListFiles(int listId) {
     var resultSet = _db.select(
-        'select id, list_id, path from list_files where list_id = ? order by path',
+        'select id, list_id, file_id, f.path from list_files lf '
+        'inner join files f on f.id = lf.file_id '
+        'where list_id = ? order by path',
         [listId]);
 
     final lists = <AssetListFile>[];
@@ -229,10 +263,10 @@ class AssetPileViewerRepository {
     for (final row in resultSet) {
       lists.add(
         AssetListFile(
-          id: row['id'],
-          listId: row['list_id'],
-          path: row['path'],
-        ),
+            id: row['id'],
+            listId: row['list_id'],
+            fileId: row['file_id'],
+            path: row['path']),
       );
     }
 
@@ -259,21 +293,21 @@ class AssetPileViewerRepository {
     _db.execute('delete from lists where id = ?', [list.id]);
   }
 
-  AssetListFile saveAssetListFile(AssetListFile file) {
-    if (file.id != 0) {
-      _db.execute('update list_files set path = ?, list_id = ? where id = ?',
-          [file.path, file.listId, file.id]);
-      return file;
+  AssetListFile saveAssetListFile(AssetListFile listFile) {
+    if (listFile.id != 0) {
+      _db.execute('update list_files set list_id = ? where id = ?',
+          [listFile.listId, listFile.id]);
+      return listFile;
     }
     _db.execute(
-        'insert into list_files (list_id, path) '
+        'insert into list_files (list_id, file_id) '
         'values(?) ',
         [
-          file.listId,
-          file.path,
+          listFile.listId,
+          listFile.fileId,
         ]);
 
-    return file.copyWith(id: _db.lastInsertRowId);
+    return listFile.copyWith(id: _db.lastInsertRowId);
   }
 
   void deleteAssetListFile(AssetListFile file) {

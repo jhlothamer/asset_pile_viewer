@@ -50,4 +50,20 @@ class AssetFiles extends _$AssetFiles {
     }
     state = newState;
   }
+
+  void updateLists(String path, List<AssetList> lists) {
+    var assetFile = state[path]?.copyWith(lists: lists) ??
+        AssetFile.newFile(path, false, null, lists);
+
+    final assetPileViewerRepo = ref.read(assetPileViewerRepoProvider);
+    assetFile = assetPileViewerRepo.saveFile(assetFile);
+
+    final newState = state
+        .map((key, value) => MapEntry(key, key == path ? assetFile : value));
+
+    if (!newState.containsKey(path)) {
+      newState[path] = assetFile;
+    }
+    state = newState;
+  }
 }

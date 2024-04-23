@@ -41,7 +41,7 @@ class _AssetListTileState extends ConsumerState<AssetListTile> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        widget.controller.change(widget, true);
+        widget.controller.change(widget, !_selected);
       },
       onHover: (value) {
         setState(() {

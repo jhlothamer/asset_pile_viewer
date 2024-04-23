@@ -126,10 +126,11 @@ class AssetPileViewerDbSchema {
         'list_files': 'CREATE TABLE "list_files" ( '
             '   "id"  INTEGER NOT NULL, '
             '   "list_id"   INTEGER NOT NULL, '
-            '   "path"   TEXT NOT NULL, '
+            '   "file_id"   INTEGER NOT NULL, '
+            '   UNIQUE("list_id","file_id"), '
+            '   FOREIGN KEY("file_id") REFERENCES "files"("id") ON DELETE CASCADE, '
             '   FOREIGN KEY("list_id") REFERENCES "lists"("id") ON DELETE CASCADE, '
-            '   PRIMARY KEY("id" AUTOINCREMENT), '
-            '   UNIQUE("list_id","path") '
+            '   PRIMARY KEY("id" AUTOINCREMENT) '
             ') ',
       },
     );
