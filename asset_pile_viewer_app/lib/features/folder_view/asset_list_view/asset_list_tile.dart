@@ -64,7 +64,7 @@ class _AssetListTileState extends ConsumerState<AssetListTile> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    widget.assetList.name,
+                    '${widget.assetList.name} (${widget.assetList.fileCount})',
                     //style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),

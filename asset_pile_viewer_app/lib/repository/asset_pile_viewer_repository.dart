@@ -32,7 +32,8 @@ class AssetPileViewerRepository {
 
     for (final idNameString in delimLists.split(',')) {
       final idName = idNameString.split('%');
-      lists.add(AssetList(id: int.parse(idName[0]), name: idName[1]));
+      lists.add(
+          AssetList(id: int.parse(idName[0]), name: idName[1], fileCount: 0));
     }
 
     return lists;
@@ -235,7 +236,8 @@ class AssetPileViewerRepository {
   }
 
   List<AssetList> getAssetLists() {
-    var resultSet = _db.select('select id, name from lists order by name');
+    var resultSet = _db.select(
+        'select id, name, (select count(*) from list_files lf where lf.list_id = l.id) file_count from lists l order by name');
 
     final lists = <AssetList>[];
 
@@ -244,6 +246,7 @@ class AssetPileViewerRepository {
         AssetList(
           id: row['id'],
           name: row['name'],
+          fileCount: row['file_count'],
         ),
       );
     }

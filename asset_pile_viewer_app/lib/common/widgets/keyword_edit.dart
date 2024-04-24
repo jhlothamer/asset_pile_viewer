@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class KeywordEditorController extends ChangeNotifier {
   final List<String> keywords;
-  KeywordEditorController(this.keywords);
+  final List<String>? acceptableKeywords;
+  KeywordEditorController(this.keywords, [this.acceptableKeywords]);
 
   List<String> add(String keywordsString) {
     var changed = false;
@@ -13,6 +14,11 @@ class KeywordEditorController extends ChangeNotifier {
         .map((k) => k.trim())
         .where((k) => k.isNotEmpty);
     for (final keyword in enteredKeywords) {
+      if (acceptableKeywords != null &&
+          !acceptableKeywords!.contains(keyword.toLowerCase())) {
+        continue;
+      }
+
       if (!keywords.contains(keyword)) {
         keywords.add(keyword);
         newKeywords.add(keyword);

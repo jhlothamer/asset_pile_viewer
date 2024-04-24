@@ -191,6 +191,7 @@ class _FileDetailDisplayState extends ConsumerState<FileDetailDisplay> {
       KeywordEdit(
         controller: KeywordEditorController(
           assetFile.lists.map((e) => e.name).toList(),
+          assetLists.map((e) => e.name.toLowerCase()).toList(),
         ),
         noun: 'list',
         onKeywordsAdded: (newList) {
@@ -204,7 +205,13 @@ class _FileDetailDisplayState extends ConsumerState<FileDetailDisplay> {
               .read(assetFilesProvider.notifier)
               .updateLists(assetFile.path, existingNewLists);
         },
-        onKeywordDeleted: (deletedList) {},
+        onKeywordDeleted: (deletedList) {
+          final updatedLists =
+              assetFile.lists.where((l) => l.name != deletedList).toList();
+          ref
+              .read(assetFilesProvider.notifier)
+              .updateLists(assetFile.path, updatedLists);
+        },
       ),
     ];
   }

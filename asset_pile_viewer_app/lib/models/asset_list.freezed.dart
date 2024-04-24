@@ -18,6 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$AssetList {
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
+  int get fileCount => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $AssetListCopyWith<AssetList> get copyWith =>
@@ -29,7 +30,7 @@ abstract class $AssetListCopyWith<$Res> {
   factory $AssetListCopyWith(AssetList value, $Res Function(AssetList) then) =
       _$AssetListCopyWithImpl<$Res, AssetList>;
   @useResult
-  $Res call({int id, String name});
+  $Res call({int id, String name, int fileCount});
 }
 
 /// @nodoc
@@ -47,6 +48,7 @@ class _$AssetListCopyWithImpl<$Res, $Val extends AssetList>
   $Res call({
     Object? id = null,
     Object? name = null,
+    Object? fileCount = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -57,6 +59,10 @@ class _$AssetListCopyWithImpl<$Res, $Val extends AssetList>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
+      fileCount: null == fileCount
+          ? _value.fileCount
+          : fileCount // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 }
@@ -69,7 +75,7 @@ abstract class _$$AssetListImplCopyWith<$Res>
       __$$AssetListImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, String name});
+  $Res call({int id, String name, int fileCount});
 }
 
 /// @nodoc
@@ -85,6 +91,7 @@ class __$$AssetListImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = null,
+    Object? fileCount = null,
   }) {
     return _then(_$AssetListImpl(
       id: null == id
@@ -95,6 +102,10 @@ class __$$AssetListImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
+      fileCount: null == fileCount
+          ? _value.fileCount
+          : fileCount // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -102,16 +113,19 @@ class __$$AssetListImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$AssetListImpl implements _AssetList {
-  const _$AssetListImpl({required this.id, required this.name});
+  const _$AssetListImpl(
+      {required this.id, required this.name, required this.fileCount});
 
   @override
   final int id;
   @override
   final String name;
+  @override
+  final int fileCount;
 
   @override
   String toString() {
-    return 'AssetList(id: $id, name: $name)';
+    return 'AssetList(id: $id, name: $name, fileCount: $fileCount)';
   }
 
   @override
@@ -120,11 +134,13 @@ class _$AssetListImpl implements _AssetList {
         (other.runtimeType == runtimeType &&
             other is _$AssetListImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.name, name) || other.name == name));
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.fileCount, fileCount) ||
+                other.fileCount == fileCount));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, id, name);
+  int get hashCode => Object.hash(runtimeType, id, name, fileCount);
 
   @JsonKey(ignore: true)
   @override
@@ -135,12 +151,16 @@ class _$AssetListImpl implements _AssetList {
 
 abstract class _AssetList implements AssetList {
   const factory _AssetList(
-      {required final int id, required final String name}) = _$AssetListImpl;
+      {required final int id,
+      required final String name,
+      required final int fileCount}) = _$AssetListImpl;
 
   @override
   int get id;
   @override
   String get name;
+  @override
+  int get fileCount;
   @override
   @JsonKey(ignore: true)
   _$$AssetListImplCopyWith<_$AssetListImpl> get copyWith =>
