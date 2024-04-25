@@ -1,4 +1,5 @@
 import 'package:assetPileViewer/features/folder_view/providers/asset_root_folder_provider.dart';
+import 'package:assetPileViewer/features/folder_view/providers/selected_file_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/selected_folder_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/show_hidden_folders_provider.dart';
 import 'package:file_selector/file_selector.dart';
@@ -49,6 +50,7 @@ class FolderViewHeader extends ConsumerWidget {
                       ref
                           .read(selectedFolderProvider.notifier)
                           .update(directoryPath);
+                      ref.read(selectedFileProvider.notifier).clear();
                       onAssetRootFolderSelected(directoryPath);
                     },
                   ),

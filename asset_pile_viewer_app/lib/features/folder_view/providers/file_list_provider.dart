@@ -5,6 +5,7 @@ import 'package:assetPileViewer/features/folder_view/providers/asset_directories
 import 'package:assetPileViewer/features/folder_view/providers/asset_files_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/asset_root_folder_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/directory_tree_provider.dart';
+import 'package:assetPileViewer/features/folder_view/providers/selected_asset_list_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/selected_folder_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/show_hidden_folders_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/sort_order_provider.dart';
@@ -26,6 +27,19 @@ class FileListInfo {
 class FileList extends _$FileList {
   @override
   FileListInfo build() {
+    final assetFiles = ref.watch(assetFilesProvider);
+    final selectedAssetList = ref.watch(selectedAssetListProvider);
+
+    if (selectedAssetList != null) {
+      final fileKeywords = assetFiles.map((key, value) =>
+          MapEntry(key, value.keywords.map((k) => k.name).toSet()));
+      final files = assetFiles.values
+          .where((f) => f.lists.any((l) => l.id == selectedAssetList.id))
+          .map((f) => FileInfo.fromPath(f.path))
+          .toList();
+      return FileListInfo(files: files, fileKeywords: fileKeywords);
+    }
+
     final selectedFolder = ref.watch(selectedFolderProvider);
     final assetRootFolder = ref.watch(assetRootFolderProvider);
     final result = ref.watch(directoryTreeProvider);
@@ -48,7 +62,6 @@ class FileList extends _$FileList {
     }
 
     final assetDirectories = ref.watch(assetDirectoriesProvider);
-    final assetFiles = ref.watch(assetFilesProvider);
     final collectedFileKeywords = <String, Set<String>>{};
 
     final showHidden = ref.watch(showHiddenFoldersProvider);

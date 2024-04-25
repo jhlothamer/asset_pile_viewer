@@ -16,6 +16,7 @@ class _AssetListViewState extends ConsumerState<AssetListsView>
   final _newListTextEditingController = TextEditingController();
   final _focusNode = FocusNode();
   final _selectedWidgetController = SelectedWidgetController();
+
   @override
   void dispose() {
     _selectedWidgetController.dispose();
@@ -28,31 +29,29 @@ class _AssetListViewState extends ConsumerState<AssetListsView>
     final assetLists = ref.watch(assetListsProvider);
     return Column(
       children: [
-        Flexible(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _newListTextEditingController,
-              focusNode: _focusNode,
-              decoration: const InputDecoration(
-                isDense: true,
-                labelText: 'New list ',
-                labelStyle: TextStyle(
-                  color: Colors.grey,
-                  fontStyle: FontStyle.italic,
-                ),
-                border: OutlineInputBorder(),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextField(
+            controller: _newListTextEditingController,
+            focusNode: _focusNode,
+            decoration: const InputDecoration(
+              isDense: true,
+              labelText: 'New list ',
+              labelStyle: TextStyle(
+                color: Colors.grey,
+                fontStyle: FontStyle.italic,
               ),
-              onSubmitted: (listName) {
-                final trimmedListName = listName.trim();
-                if (trimmedListName.isEmpty) {
-                  return;
-                }
-                ref.read(assetListsProvider.notifier).addList(trimmedListName);
-                _newListTextEditingController.clear();
-                _focusNode.requestFocus();
-              },
+              border: OutlineInputBorder(),
             ),
+            onSubmitted: (listName) {
+              final trimmedListName = listName.trim();
+              if (trimmedListName.isEmpty) {
+                return;
+              }
+              ref.read(assetListsProvider.notifier).addList(trimmedListName);
+              _newListTextEditingController.clear();
+              _focusNode.requestFocus();
+            },
           ),
         ),
         Expanded(

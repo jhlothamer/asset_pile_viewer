@@ -9,6 +9,8 @@ class FileInfo {
   final String name;
   final FileType fileType;
   FileInfo(this.path, this.name, this.fileType);
+  factory FileInfo.fromPath(String path) =>
+      FileInfo(path, path.fileName(), path.getFileType());
 }
 
 class DirectoryNode {

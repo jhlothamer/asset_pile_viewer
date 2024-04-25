@@ -1,6 +1,7 @@
 import 'package:assetPileViewer/common/widgets/confirm_dialog.dart';
 import 'package:assetPileViewer/common/widgets/selected_widget_controller.dart';
 import 'package:assetPileViewer/features/folder_view/providers/asset_lists_provider.dart';
+import 'package:assetPileViewer/features/folder_view/providers/selected_asset_list_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -42,6 +43,12 @@ class _AssetListTileState extends ConsumerState<AssetListTile> {
     return InkWell(
       onTap: () {
         widget.controller.change(widget, !_selected);
+        final notifier = ref.read(selectedAssetListProvider.notifier);
+        if (_selected) {
+          notifier.select(widget.assetList);
+        } else {
+          notifier.clear();
+        }
       },
       onHover: (value) {
         setState(() {
