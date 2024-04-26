@@ -1,3 +1,4 @@
+import 'package:assetPileViewer/features/folder_view/providers/asset_files_provider.dart';
 import 'package:assetPileViewer/models/models.dart';
 import 'package:assetPileViewer/repository/asset_pile_viewer_repo_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -78,5 +79,6 @@ class AssetLists extends _$AssetLists {
     ];
     newState.sort((a, b) => a.name.compareTo(b.name));
     state = newState;
+    ref.invalidate(assetFilesProvider);
   }
 }
