@@ -55,4 +55,28 @@ class AssetLists extends _$AssetLists {
     final newState = [...state.where((l) => l.id != list.id)];
     state = newState;
   }
+
+  void moveListFiles(int sourceListId, int destinationListId) {
+    if (!state.any((l) => l.id == sourceListId) ||
+        !state.any((l) => l.id == destinationListId)) {
+      //error?
+      return;
+    }
+    final assetPileViewerRepo = ref.read(assetPileViewerRepoProvider);
+    if (!assetPileViewerRepo.moveAssetListFiles(
+        sourceListId, destinationListId)) {
+      return;
+    }
+    final sourceList = state.where((l) => l.id == sourceListId).first;
+    final destinationList = state.where((l) => l.id == destinationListId).first;
+    final newFileCount = sourceList.fileCount + destinationList.fileCount;
+
+    final newState = [
+      ...state.where((l) => l.id != sourceListId && l.id != destinationListId),
+      sourceList.copyWith(fileCount: 0),
+      destinationList.copyWith(fileCount: newFileCount)
+    ];
+    newState.sort((a, b) => a.name.compareTo(b.name));
+    state = newState;
+  }
 }

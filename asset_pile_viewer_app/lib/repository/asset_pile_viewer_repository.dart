@@ -316,4 +316,10 @@ class AssetPileViewerRepository {
   void deleteAssetListFile(AssetListFile file) {
     _db.execute('delete from list_files where id = ?', [file.id]);
   }
+
+  bool moveAssetListFiles(int sourceListId, int destinationListId) {
+    _db.execute('update list_files set list_id = ? where list_id = ?',
+        [destinationListId, sourceListId]);
+    return _db.updatedRows > 0;
+  }
 }

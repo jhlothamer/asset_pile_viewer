@@ -1,7 +1,14 @@
+import 'dart:io';
+
+import 'package:assetPileViewer/common/util/path.dart';
+import 'package:assetPileViewer/common/util/string_extensions.dart';
 import 'package:assetPileViewer/common/widgets/confirm_dialog.dart';
 import 'package:assetPileViewer/common/widgets/selected_widget_controller.dart';
+import 'package:assetPileViewer/features/folder_view/asset_list_view/move_list_files.dart';
+import 'package:assetPileViewer/features/folder_view/providers/asset_files_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/asset_lists_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/selected_asset_list_provider.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -102,12 +109,93 @@ class _AssetListTileState extends ConsumerState<AssetListTile> {
                 ),
               if (_hovered)
                 IconButton(
-                  tooltip: 'Delete',
+                  tooltip: 'Copy Files to Folder',
                   onPressed: () async {
-                    if (await showConfirm(context,
-                        title: 'Delete list ${widget.assetList.name}?',
-                        message:
-                            'Are you sure you want to delete list ${widget.assetList.name}?')) {
+                    if (widget.assetList.fileCount == 0) {
+                      await showConfirm(context,
+                          title: 'No Files to Copy',
+                          message:
+                              'The list "${widget.assetList.name}" has no files to copy.',
+                          onlyOk: true);
+                      return;
+                    }
+
+                    var destinationPath =
+                        await getDirectoryPath(confirmButtonText: 'Copy Files');
+                    if (destinationPath == null) {
+                      return;
+                    }
+                    if (!destinationPath.endsWith(pathSeparator)) {
+                      destinationPath += pathSeparator;
+                    }
+
+                    //check if any are going to be copied over
+                    var confirmOverwrite = false;
+                    final fromToPaths = <String, String>{};
+                    final filePaths = ref
+                        .read(assetFilesProvider)
+                        .values
+                        .where((f) =>
+                            f.lists.any((l) => l.id == widget.assetList.id))
+                        .map((e) => e.path);
+                    for (String filePath in filePaths) {
+                      final file = File(filePath);
+                      if (!await file.exists()) {
+                        continue;
+                      }
+                      final copyToFilePath =
+                          '$destinationPath${filePath.fileName()}';
+                      final destFile = File(copyToFilePath);
+                      if (await destFile.exists()) {
+                        confirmOverwrite = true;
+                      }
+                      fromToPaths[filePath] = copyToFilePath;
+                    }
+
+                    if (confirmOverwrite) {
+                      if (!context.mounted) {
+                        return;
+                      }
+                      if (!await showConfirm(context,
+                          message:
+                              'Some files in the destination folder will be overwritten.  Is this OK?')) {
+                        return;
+                      }
+                    }
+
+                    fromToPaths.forEach((fromPath, toPath) async {
+                      await File(fromPath).copy(toPath);
+                    });
+
+                    if (!context.mounted) {
+                      return;
+                    }
+                    await showConfirm(context,
+                        title: 'Files Copied.',
+                        message: '${fromToPaths.length} file(s) copied.',
+                        onlyOk: true);
+                  },
+                  icon: const Icon(Icons.file_copy),
+                ),
+              if (_hovered)
+                IconButton(
+                  tooltip: 'Move Files to Another List',
+                  onPressed: () {
+                    showMoveListFilesDialog(context, widget.assetList);
+                  },
+                  icon: const Icon(Icons.logout),
+                ),
+              if (_hovered)
+                IconButton(
+                  tooltip: 'Delete List',
+                  onPressed: () async {
+                    final isEmpty = widget.assetList.fileCount == 0;
+                    if (isEmpty ||
+                        await showConfirm(context,
+                            title: 'Delete list "${widget.assetList.name}"?',
+                            message:
+                                'This list has ${widget.assetList.fileCount} file(s) in it.'
+                                '\r\nAre you sure you want to delete this list?')) {
                       ref
                           .read(assetListsProvider.notifier)
                           .deleteList(widget.assetList);
