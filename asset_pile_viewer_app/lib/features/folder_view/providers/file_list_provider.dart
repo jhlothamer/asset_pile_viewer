@@ -29,6 +29,8 @@ class FileList extends _$FileList {
   FileListInfo build() {
     final assetFiles = ref.watch(assetFilesProvider);
     final selectedAssetList = ref.watch(selectedAssetListProvider);
+    final sortOrder = ref.watch(sortOrderProvider);
+    final sortFactor = sortOrder == SortDirection.ascending ? 1 : -1;
 
     if (selectedAssetList != null) {
       final fileKeywords = assetFiles.map((key, value) =>
@@ -37,6 +39,10 @@ class FileList extends _$FileList {
           .where((f) => f.lists.any((l) => l.id == selectedAssetList.id))
           .map((f) => FileInfo.fromPath(f.path))
           .toList();
+      files.sort(
+        (a, b) => a.name.compareTo(b.name) * sortFactor,
+      );
+
       return FileListInfo(files: files, fileKeywords: fileKeywords);
     }
 
@@ -70,9 +76,6 @@ class FileList extends _$FileList {
 
     final collectedFiles = selectedNode.collectFiles(assetDirectories,
         assetFiles, collectedFileKeywords, inheritedKeywords, showHidden);
-
-    final sortOrder = ref.watch(sortOrderProvider);
-    final sortFactor = sortOrder == SortDirection.ascending ? 1 : -1;
 
     collectedFiles.sort(
       (a, b) => a.name.compareTo(b.name) * sortFactor,
