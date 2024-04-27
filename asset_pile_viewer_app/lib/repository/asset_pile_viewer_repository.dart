@@ -318,8 +318,18 @@ class AssetPileViewerRepository {
   }
 
   bool moveAssetListFiles(int sourceListId, int destinationListId) {
-    _db.execute('update list_files set list_id = ? where list_id = ?',
-        [destinationListId, sourceListId]);
-    return _db.updatedRows > 0;
+    _db.execute(
+        'insert into list_files (list_id, file_id) '
+        'select ?, file_id from list_files lf where list_id = ? '
+        'and not exists(select * from list_files lf2 where lf2.list_id = ? and lf2.file_id = lf.file_id)',
+        [destinationListId, sourceListId, destinationListId]);
+
+    var rowsUpdated = _db.updatedRows > 0;
+
+    _db.execute('delete from list_files where list_id = ?', [sourceListId]);
+
+    rowsUpdated = rowsUpdated || _db.updatedRows > 0;
+
+    return rowsUpdated;
   }
 }
