@@ -11,6 +11,16 @@ class FileInfo {
   FileInfo(this.path, this.name, this.fileType);
   factory FileInfo.fromPath(String path) =>
       FileInfo(path, path.fileName(), path.getFileType());
+  @override
+  int get hashCode => path.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    if (other is FileInfo) {
+      return path == other.path;
+    }
+    return super == other;
+  }
 }
 
 class DirectoryNode {

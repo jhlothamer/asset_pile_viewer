@@ -62,11 +62,12 @@ class _FileGridViewState extends ConsumerState<FileGridView> {
         _getFolderString(assetRootFolder, selectedFolder, selectedAssetList);
 
     //reset scroll if file list is different from before
-    if (_prevFileListHashCode != fileList.hashCode) {
-      _prevFileListHashCode = fileList.hashCode;
-      if (_scrollController.hasClients) {
+    final filteredFileListHashCode = Object.hashAll(fileList);
+    if (_prevFileListHashCode != filteredFileListHashCode) {
+      if (_prevFileListHashCode != null && _scrollController.hasClients) {
         _scrollController.jumpTo(0);
       }
+      _prevFileListHashCode = filteredFileListHashCode;
     }
 
     return Flex(
@@ -91,6 +92,7 @@ class _FileGridViewState extends ConsumerState<FileGridView> {
         Expanded(
           flex: 1,
           child: GridView.builder(
+            key: const PageStorageKey<String>('FileGrid'),
             controller: _scrollController,
             itemCount: min(fileList.length, _pageCount * _pageSize),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
