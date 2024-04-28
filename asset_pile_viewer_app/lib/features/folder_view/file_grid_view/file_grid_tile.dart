@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:assetPileViewer/common/util/string_extensions.dart';
 import 'package:assetPileViewer/common/widgets/images.dart';
 import 'package:assetPileViewer/common/widgets/selected_widget_controller.dart';
+import 'package:assetPileViewer/features/folder_view/file_grid_view/draggable_file.dart';
 import 'package:assetPileViewer/features/folder_view/folder_view/directory_node.dart';
 import 'package:assetPileViewer/features/folder_view/providers/selected_file_provider.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -81,32 +82,40 @@ class _FileGridTileState extends ConsumerState<FileGridTile> {
   Widget build(BuildContext context) {
     Widget inner = _createInner(context);
 
-    return GestureDetector(
-      onTap: _toggleSelected,
-      child: GridTile(
-        header: Tooltip(
-          message: widget.fileInfo.name,
-          child: GridTileBar(
-            title: Container(
-              color: Theme.of(context).colorScheme.inverseSurface,
-              child: Text(
-                textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .labelLarge!
-                    .copyWith(color: Theme.of(context).colorScheme.background),
-                widget.fileInfo.name,
+    return Stack(
+      children: [
+        GestureDetector(
+          onTap: _toggleSelected,
+          child: GridTile(
+            header: Tooltip(
+              message: widget.fileInfo.name,
+              child: GridTileBar(
+                title: Container(
+                  color: Theme.of(context).colorScheme.inverseSurface,
+                  child: Text(
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                        color: Theme.of(context).colorScheme.background),
+                    widget.fileInfo.name,
+                  ),
+                ),
               ),
+            ),
+            child: Container(
+              color: selected
+                  ? Theme.of(context).focusColor
+                  : Theme.of(context).colorScheme.background,
+              child: inner,
             ),
           ),
         ),
-        child: Container(
-          color: selected
-              ? Theme.of(context).focusColor
-              : Theme.of(context).colorScheme.background,
-          child: inner,
+        Container(
+          alignment: Alignment.bottomLeft,
+          child: DraggableFile(
+            filePath: widget.fileInfo.path,
+          ),
         ),
-      ),
+      ],
     );
   }
 
