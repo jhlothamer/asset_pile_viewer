@@ -26,7 +26,10 @@ class AssetPileViewerDbSchema {
     return tableNames;
   }
 
-  VersionInfo _getDbVersion(Database db) {
+  VersionInfo _getDbVersion(Database db, List<String> allTableNames) {
+    if (!allTableNames.contains('db_version_history')) {
+      return VersionInfo.empty();
+    }
     final resultSet = db.select(
         'select version from db_version_history order by id desc limit 1');
 
@@ -52,9 +55,7 @@ class AssetPileViewerDbSchema {
 
   void _ensureSchemaVersion0_1_0(Database db, List<String> allTableNames) {
     final schemaVersion = VersionInfo(major: 0, minor: 1, patch: 0);
-    final currentDbVersion = allTableNames.contains('db_version_history')
-        ? _getDbVersion(db)
-        : VersionInfo.empty();
+    final currentDbVersion = _getDbVersion(db, allTableNames);
     if (currentDbVersion >= schemaVersion) {
       return;
     }
@@ -107,9 +108,7 @@ class AssetPileViewerDbSchema {
 
   void _ensureSchemaVersion0_2_0(Database db, List<String> allTableNames) {
     final schemaVersion = VersionInfo(major: 0, minor: 2, patch: 0);
-    final currentDbVersion = allTableNames.contains('db_version_history')
-        ? _getDbVersion(db)
-        : VersionInfo.empty();
+    final currentDbVersion = _getDbVersion(db, allTableNames);
     if (currentDbVersion >= schemaVersion) {
       return;
     }
@@ -138,32 +137,35 @@ class AssetPileViewerDbSchema {
     _insertDbVersion(db, schemaVersion);
   }
 
-  bool _isDbNewerVersion(Database db, List<String> allTableNames) {
-    if (!allTableNames.contains('db_version_history')) {
-      return false;
-    }
-
-    final results = db.select('select version from db_version_history');
-    for (final row in results) {
-      final version = VersionInfo.fromString(row['version']);
-      if (version > currentSchemaVersion) {
-        // throw 'Database version greater than expected: db version: $version, expected: $currentSchemaVersion';
-        foundSchemaVersion = version;
-        dbSchemaVersionUnsupported = true;
-        return true;
-      }
+  bool _isDbNewerVersion(VersionInfo dbSchemaVersion) {
+    if (dbSchemaVersion > currentSchemaVersion) {
+      foundSchemaVersion = dbSchemaVersion;
+      dbSchemaVersionUnsupported = true;
+      return true;
     }
 
     return false;
+  }
+
+  void _backupDbFile(VersionInfo dbSchemaVersion) {
+    if (dbSchemaVersion.isEmpty() || dbSchemaVersion >= currentSchemaVersion) {
+      return;
+    }
+    var dbFile = File(dbFilePath);
+    dbFile.copySync('$dbFilePath.$dbSchemaVersion');
   }
 
   void update() {
     final db = sqlite3.open(dbFilePath);
     final allTableNames = _getAllTableNames(db);
 
-    if (_isDbNewerVersion(db, allTableNames)) {
+    final dbSchemaVersion = _getDbVersion(db, allTableNames);
+
+    if (_isDbNewerVersion(dbSchemaVersion)) {
       return;
     }
+
+    _backupDbFile(dbSchemaVersion);
 
     _ensureSchemaVersion0_1_0(db, allTableNames);
     _ensureSchemaVersion0_2_0(db, allTableNames);

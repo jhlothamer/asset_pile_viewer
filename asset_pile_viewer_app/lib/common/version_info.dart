@@ -1,3 +1,5 @@
+import 'dart:math';
+
 class VersionInfo {
   final int major;
   final int minor;
@@ -21,6 +23,8 @@ class VersionInfo {
 
   @override
   String toString() => '$major.$minor.$patch';
+
+  bool isEmpty() => major == 0 && minor == 0 && patch == 0;
 
   @override
   bool operator ==(Object other) {
