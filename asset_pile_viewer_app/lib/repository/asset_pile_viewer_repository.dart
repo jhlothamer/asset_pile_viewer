@@ -8,6 +8,7 @@ class AssetPileViewerRepository {
   late Database _db;
   AssetPileViewerRepository(this.dbfilePath) {
     _db = sqlite3.open(dbfilePath);
+    _db.execute('PRAGMA foreign_keys=ON');
   }
 
   List<Keyword> _stringToKeywords(String delimKeywords) {
