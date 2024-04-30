@@ -5,7 +5,7 @@ import 'package:assetPileViewer/common/util/string_extensions.dart';
 import 'package:assetPileViewer/common/widgets/confirm_dialog.dart';
 import 'package:assetPileViewer/common/widgets/get_string_dialog.dart';
 import 'package:assetPileViewer/common/widgets/selected_widget_controller.dart';
-import 'package:assetPileViewer/features/folder_view/asset_list_view/move_list_files.dart';
+import 'package:assetPileViewer/features/folder_view/asset_list_view/move_list_files_dialog.dart';
 import 'package:assetPileViewer/features/folder_view/providers/asset_file_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/asset_files_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/asset_lists_provider.dart';

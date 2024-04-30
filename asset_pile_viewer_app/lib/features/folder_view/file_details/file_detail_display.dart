@@ -11,6 +11,7 @@ import 'package:assetPileViewer/features/folder_view/file_details/audio_file_det
 import 'package:assetPileViewer/features/folder_view/file_details/file_asset_lists.dart';
 import 'package:assetPileViewer/features/folder_view/folder_view/directory_node.dart';
 import 'package:assetPileViewer/features/folder_view/providers/asset_directories_provider.dart';
+import 'package:assetPileViewer/features/folder_view/providers/asset_file_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/asset_files_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/asset_root_folder_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/directory_tree_provider.dart';
@@ -37,8 +38,7 @@ class _FileDetailDisplayState extends ConsumerState<FileDetailDisplay> {
     final assetRootFolder = ref.watch(assetRootFolderProvider);
     final selectedFilePath = ref.watch(selectedFileProvider);
     final rootNode = ref.watch(directoryTreeProvider).value;
-    final assetFile = ref.watch(assetFilesProvider)[selectedFilePath] ??
-        AssetFile.newFile(selectedFilePath);
+    final assetFile = ref.read(assetFileProvider(selectedFilePath));
 
     if (selectedFilePath.isEmpty) {
       return const Center(

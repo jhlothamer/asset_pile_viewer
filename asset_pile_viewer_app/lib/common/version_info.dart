@@ -1,5 +1,3 @@
-import 'dart:math';
-
 class VersionInfo {
   final int major;
   final int minor;
