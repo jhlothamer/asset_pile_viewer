@@ -13,10 +13,19 @@ class AssetLists extends _$AssetLists {
     return assetPileViewerRepo.getAssetLists();
   }
 
-  AssetList addList(String name) {
+  AssetList? _findList(String name) {
     final lowerCaseName = name.toLowerCase();
     final existingList =
         state.where((l) => l.name.toLowerCase() == lowerCaseName).firstOrNull;
+    if (existingList != null) {
+      return existingList;
+    }
+
+    return null;
+  }
+
+  AssetList addList(String name) {
+    final existingList = _findList(name);
     if (existingList != null) {
       return existingList;
     }
@@ -80,5 +89,29 @@ class AssetLists extends _$AssetLists {
     newState.sort((a, b) => a.name.compareTo(b.name));
     state = newState;
     ref.invalidate(assetFilesProvider);
+  }
+
+  bool copyList(AssetList sourceList, String newListName) {
+    final existingList = _findList(newListName);
+    if (existingList != null) {
+      return false;
+    }
+
+    final assetPileViewerRepo = ref.read(assetPileViewerRepoProvider);
+    final newList = assetPileViewerRepo
+        .saveAssetList(AssetList.newAssetList(name: newListName));
+
+    assetPileViewerRepo.copyAssetListsFiles(sourceList.id, newList.id);
+
+    final newState = [
+      ...state,
+      newList.copyWith(fileCount: sourceList.fileCount)
+    ];
+    newState.sort((a, b) => a.name.compareTo(b.name));
+    state = newState;
+
+    ref.invalidate(assetFilesProvider);
+
+    return true;
   }
 }

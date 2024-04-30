@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:assetPileViewer/common/util/path.dart';
 import 'package:assetPileViewer/common/util/string_extensions.dart';
 import 'package:assetPileViewer/common/widgets/confirm_dialog.dart';
+import 'package:assetPileViewer/common/widgets/get_string_dialog.dart';
 import 'package:assetPileViewer/common/widgets/selected_widget_controller.dart';
 import 'package:assetPileViewer/features/folder_view/asset_list_view/move_list_files.dart';
 import 'package:assetPileViewer/features/folder_view/providers/asset_file_provider.dart';
@@ -85,6 +86,32 @@ class _AssetListTileState extends ConsumerState<AssetListTile> {
                 showMoveListFilesDialog(context, widget.assetList);
               },
               icon: const Icon(Icons.logout),
+            ),
+            IconButton(
+              tooltip: 'Copy List',
+              onPressed: () async {
+                final newListName = await showRenameDialog(
+                    context, widget.assetList.name, true);
+                if (newListName == null || newListName.isEmpty) {
+                  return;
+                }
+                if (!context.mounted) {
+                  return;
+                }
+
+                final assetListsProviderNotifier =
+                    ref.read(assetListsProvider.notifier);
+
+                if (!assetListsProviderNotifier.copyList(
+                    widget.assetList, newListName)) {
+                  showConfirm(context,
+                      title: 'List already exists.',
+                      message:
+                          'A list named $newListName already exists.\r\n\r\nPlease choose a different name.',
+                      onlyOk: true);
+                }
+              },
+              icon: const Icon(Icons.copy),
             ),
             IconButton(
               tooltip: 'Delete List',
@@ -224,31 +251,16 @@ class _AssetListTileState extends ConsumerState<AssetListTile> {
     }
   }
 
-  Future<String?> showRenameDialog(BuildContext context, String name) async {
-    final textEditingController = TextEditingController(text: name);
-    final result = await showDialog<String>(
-        context: context,
-        builder: (context) => AlertDialog(
-              title: Text('Rename list $name'),
-              content: TextField(
-                controller: textEditingController,
-                decoration: const InputDecoration(labelText: 'Enter new name'),
-              ),
-              actions: [
-                OutlinedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(null);
-                  },
-                  child: const Text('Cancel'),
-                ),
-                FilledButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(textEditingController.text);
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            ));
+  Future<String?> showRenameDialog(BuildContext context, String name,
+      [bool makeCopy = false]) async {
+    final existingListNames =
+        ref.read(assetListsProvider).map((e) => e.name.toLowerCase()).toList();
+
+    final result = await showGetStringDialog(context,
+        prompt: makeCopy ? 'Enter name of new list' : 'Enter new name',
+        title: makeCopy ? 'Copy list "$name"' : 'Rename list "$name"',
+        disallowedValueErrorText: 'List with that name exists',
+        disallowedValues: existingListNames);
     return result;
   }
 }

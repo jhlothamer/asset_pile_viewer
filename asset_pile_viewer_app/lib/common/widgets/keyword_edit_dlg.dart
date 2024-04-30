@@ -58,6 +58,12 @@ class _KeywordEditDlgState extends State<KeywordEditDlg> {
         ),
       ),
       actions: [
+        OutlinedButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('Cancel'),
+        ),
         FilledButton(
           onPressed: () {
             //submit any pending text - only close now if no new keywords added
@@ -71,12 +77,6 @@ class _KeywordEditDlgState extends State<KeywordEditDlg> {
             Navigator.of(context).pop(_controller.keywords);
           },
           child: const Text('OK'),
-        ),
-        OutlinedButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: const Text('Cancel'),
         ),
       ],
     );
