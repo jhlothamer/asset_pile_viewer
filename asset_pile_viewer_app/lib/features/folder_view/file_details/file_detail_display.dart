@@ -38,7 +38,7 @@ class _FileDetailDisplayState extends ConsumerState<FileDetailDisplay> {
     final assetRootFolder = ref.watch(assetRootFolderProvider);
     final selectedFilePath = ref.watch(selectedFileProvider);
     final rootNode = ref.watch(directoryTreeProvider).value;
-    final assetFile = ref.read(assetFileProvider(selectedFilePath));
+    final assetFile = ref.watch(assetFileProvider(selectedFilePath));
 
     if (selectedFilePath.isEmpty) {
       return const Center(

@@ -56,25 +56,34 @@ class _FileAssetListsState extends ConsumerState<FileAssetLists> {
                               },
                             ),
                           )
-                        : widget.assetFile.lists.map(
-                            (l) => InputChip(
-                              label: Text(l.name),
-                              padding: EdgeInsets.zero,
-                              backgroundColor: Theme.of(context).focusColor,
-                              side: BorderSide.none,
-                              deleteButtonTooltipMessage:
-                                  'Remove List ${l.name}',
-                              onDeleted: () {
-                                final updatedLists = widget.assetFile.lists
-                                    .where((element) => element.id != l.id)
-                                    .toList();
-                                ref
-                                    .read(assetFilesProvider.notifier)
-                                    .updateLists(
-                                        widget.assetFile.path, updatedLists);
-                              },
-                            ),
-                          ),
+                        : widget.assetFile.lists.isNotEmpty
+                            ? widget.assetFile.lists.map(
+                                (l) => InputChip(
+                                  label: Text(l.name),
+                                  padding: EdgeInsets.zero,
+                                  backgroundColor: Theme.of(context).focusColor,
+                                  side: BorderSide.none,
+                                  deleteButtonTooltipMessage:
+                                      'Remove List ${l.name}',
+                                  onDeleted: () {
+                                    final updatedLists = widget.assetFile.lists
+                                        .where((element) => element.id != l.id)
+                                        .toList();
+                                    ref
+                                        .read(assetFilesProvider.notifier)
+                                        .updateLists(widget.assetFile.path,
+                                            updatedLists);
+                                  },
+                                ),
+                              )
+                            : [
+                                const Text(
+                                  'No Lists',
+                                  style: TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                      color: Colors.grey),
+                                )
+                              ],
                   ],
                 ),
               ),
