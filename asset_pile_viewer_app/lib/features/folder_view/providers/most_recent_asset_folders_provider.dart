@@ -16,7 +16,7 @@ class MostRecentAssetFolders extends _$MostRecentAssetFolders {
   void update(String newAssetRootFolder) {
     final newState = [
       newAssetRootFolder,
-      ...state.where((folder) => folder != newAssetRootFolder)
+      ...state.where((folder) => folder != newAssetRootFolder).take(9)
     ];
 
     final sharedPreferences = ref.watch(sharedPreferencesProvider);
