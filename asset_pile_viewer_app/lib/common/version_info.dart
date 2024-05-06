@@ -22,6 +22,8 @@ class VersionInfo {
   @override
   String toString() => '$major.$minor.$patch';
 
+  bool isEmpty() => major == 0 && minor == 0 && patch == 0;
+
   @override
   bool operator ==(Object other) {
     return other is VersionInfo &&
@@ -44,6 +46,10 @@ class VersionInfo {
     return result;
   }
 
+  bool operator >=(VersionInfo other) {
+    return !(this < other);
+  }
+
   bool operator <(VersionInfo other) {
     final result = major < other.major
         ? true
@@ -53,5 +59,9 @@ class VersionInfo {
                 ? true
                 : false;
     return result;
+  }
+
+  bool operator <=(VersionInfo other) {
+    return !(this > other);
   }
 }

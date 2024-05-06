@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:assetPileViewer/common/version_info.dart';
 import 'package:sqlite3/sqlite3.dart';
 
-final currentSchemaVersion = VersionInfo(major: 0, minor: 1, patch: 0);
+final currentSchemaVersion = VersionInfo(major: 0, minor: 2, patch: 0);
 VersionInfo? foundSchemaVersion;
 bool dbSchemaVersionUnsupported = false;
 
@@ -26,7 +26,10 @@ class AssetPileViewerDbSchema {
     return tableNames;
   }
 
-  VersionInfo _getDbVersion(Database db) {
+  VersionInfo _getDbVersion(Database db, List<String> allTableNames) {
+    if (!allTableNames.contains('db_version_history')) {
+      return VersionInfo.empty();
+    }
     final resultSet = db.select(
         'select version from db_version_history order by id desc limit 1');
 
@@ -52,10 +55,8 @@ class AssetPileViewerDbSchema {
 
   void _ensureSchemaVersion0_1_0(Database db, List<String> allTableNames) {
     final schemaVersion = VersionInfo(major: 0, minor: 1, patch: 0);
-    final currentDbVersion = allTableNames.contains('db_version_history')
-        ? _getDbVersion(db)
-        : VersionInfo.empty();
-    if (currentDbVersion == schemaVersion) {
+    final currentDbVersion = _getDbVersion(db, allTableNames);
+    if (currentDbVersion >= schemaVersion) {
       return;
     }
     _ensureTables(
@@ -105,34 +106,69 @@ class AssetPileViewerDbSchema {
     _insertDbVersion(db, schemaVersion);
   }
 
-  bool _isDbNewerVersion(Database db, List<String> allTableNames) {
-    if (!allTableNames.contains('db_version_history')) {
-      return false;
+  void _ensureSchemaVersion0_2_0(Database db, List<String> allTableNames) {
+    final schemaVersion = VersionInfo(major: 0, minor: 2, patch: 0);
+    final currentDbVersion = _getDbVersion(db, allTableNames);
+    if (currentDbVersion >= schemaVersion) {
+      return;
     }
 
-    final results = db.select('select version from db_version_history');
-    for (final row in results) {
-      final version = VersionInfo.fromString(row['version']);
-      if (version > currentSchemaVersion) {
-        // throw 'Database version greater than expected: db version: $version, expected: $currentSchemaVersion';
-        foundSchemaVersion = version;
-        dbSchemaVersionUnsupported = true;
-        return true;
-      }
+    _ensureTables(
+      db,
+      allTableNames,
+      {
+        'lists': 'CREATE TABLE "lists" ( '
+            '   "id"  INTEGER NOT NULL, '
+            '   "name"   TEXT NOT NULL UNIQUE, '
+            '   PRIMARY KEY("id" AUTOINCREMENT) '
+            ')',
+        'list_files': 'CREATE TABLE "list_files" ( '
+            '   "id"  INTEGER NOT NULL, '
+            '   "list_id"   INTEGER NOT NULL, '
+            '   "file_id"   INTEGER NOT NULL, '
+            '   UNIQUE("list_id","file_id"), '
+            '   FOREIGN KEY("file_id") REFERENCES "files"("id") ON DELETE CASCADE, '
+            '   FOREIGN KEY("list_id") REFERENCES "lists"("id") ON DELETE CASCADE, '
+            '   PRIMARY KEY("id" AUTOINCREMENT) '
+            ') ',
+      },
+    );
+
+    _insertDbVersion(db, schemaVersion);
+  }
+
+  bool _isDbNewerVersion(VersionInfo dbSchemaVersion) {
+    if (dbSchemaVersion > currentSchemaVersion) {
+      foundSchemaVersion = dbSchemaVersion;
+      dbSchemaVersionUnsupported = true;
+      return true;
     }
 
     return false;
+  }
+
+  void _backupDbFile(VersionInfo dbSchemaVersion) {
+    if (dbSchemaVersion.isEmpty() || dbSchemaVersion >= currentSchemaVersion) {
+      return;
+    }
+    var dbFile = File(dbFilePath);
+    dbFile.copySync('$dbFilePath.$dbSchemaVersion');
   }
 
   void update() {
     final db = sqlite3.open(dbFilePath);
     final allTableNames = _getAllTableNames(db);
 
-    if (_isDbNewerVersion(db, allTableNames)) {
+    final dbSchemaVersion = _getDbVersion(db, allTableNames);
+
+    if (_isDbNewerVersion(dbSchemaVersion)) {
       return;
     }
 
+    _backupDbFile(dbSchemaVersion);
+
     _ensureSchemaVersion0_1_0(db, allTableNames);
+    _ensureSchemaVersion0_2_0(db, allTableNames);
   }
 
   //recreates db file with schema. WARNING!  EXISTING DATA LOST!

@@ -1,14 +1,15 @@
 import 'dart:math';
 
 import 'package:assetPileViewer/common/util/string_extensions.dart';
-import 'package:assetPileViewer/common/widgets/audioplayer/playlist_toggle_button.dart';
 import 'package:assetPileViewer/common/widgets/selected_widget_controller.dart';
 import 'package:assetPileViewer/features/folder_view/file_grid_view/file_grid_tile.dart';
 import 'package:assetPileViewer/features/folder_view/file_grid_view/sort_order_toggle_button.dart';
 import 'package:assetPileViewer/features/folder_view/providers/asset_root_folder_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/filtered_file_list_provider.dart';
+import 'package:assetPileViewer/features/folder_view/providers/selected_asset_list_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/selected_file_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/selected_folder_provider.dart';
+import 'package:assetPileViewer/models/models.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -56,14 +57,17 @@ class _FileGridViewState extends ConsumerState<FileGridView> {
     final fileList = ref.watch(filteredFileListProvider);
     final assetRootFolder = ref.watch(assetRootFolderProvider);
     final selectedFolder = ref.watch(selectedFolderProvider);
-    final folderString = _getFolderString(assetRootFolder, selectedFolder);
+    final selectedAssetList = ref.watch(selectedAssetListProvider);
+    final folderString =
+        _getFolderString(assetRootFolder, selectedFolder, selectedAssetList);
 
     //reset scroll if file list is different from before
-    if (_prevFileListHashCode != fileList.hashCode) {
-      _prevFileListHashCode = fileList.hashCode;
-      if (_scrollController.hasClients) {
+    final filteredFileListHashCode = Object.hashAll(fileList);
+    if (_prevFileListHashCode != filteredFileListHashCode) {
+      if (_prevFileListHashCode != null && _scrollController.hasClients) {
         _scrollController.jumpTo(0);
       }
+      _prevFileListHashCode = filteredFileListHashCode;
     }
 
     return Flex(
@@ -88,6 +92,7 @@ class _FileGridViewState extends ConsumerState<FileGridView> {
         Expanded(
           flex: 1,
           child: GridView.builder(
+            key: const PageStorageKey<String>('FileGrid'),
             controller: _scrollController,
             itemCount: min(fileList.length, _pageCount * _pageSize),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -109,14 +114,20 @@ class _FileGridViewState extends ConsumerState<FileGridView> {
     );
   }
 
-  String _getFolderString(String assetRootFolder, String selectedFolder) {
+  String _getFolderString(String assetRootFolder, String selectedFolder,
+      AssetList? selectedAssetList) {
+    if (selectedAssetList != null) {
+      return 'Showing files for list: ${selectedAssetList.name}';
+    }
+
     String folderString = selectedFolder;
     final rootFolder = assetRootFolder.justPath();
+
     if (folderString.isEmpty) {
       folderString = '';
     } else if (folderString != rootFolder) {
       folderString =
-          'Showing files for: ${folderString.substring(rootFolder.length + 1)}';
+          'Showing files for folder: ${folderString.substring(rootFolder.length + 1)}';
     } else {
       folderString = '/$rootFolder.lastDirectoryName()';
     }

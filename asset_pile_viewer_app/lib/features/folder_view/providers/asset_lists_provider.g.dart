@@ -1,25 +1,25 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'file_list_provider.dart';
+part of 'asset_lists_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fileListHash() => r'2cb91f8585a8b94f4a8551c12922a28edd7a60e8';
+String _$assetListsHash() => r'c67f1e0efb7239ca7bd3609c5053e9f758d7fab4';
 
-/// See also [FileList].
-@ProviderFor(FileList)
-final fileListProvider =
-    AutoDisposeNotifierProvider<FileList, FileListInfo>.internal(
-  FileList.new,
-  name: r'fileListProvider',
+/// See also [AssetLists].
+@ProviderFor(AssetLists)
+final assetListsProvider =
+    AutoDisposeNotifierProvider<AssetLists, List<AssetList>>.internal(
+  AssetLists.new,
+  name: r'assetListsProvider',
   debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$fileListHash,
+      const bool.fromEnvironment('dart.vm.product') ? null : _$assetListsHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$FileList = AutoDisposeNotifier<FileListInfo>;
+typedef _$AssetLists = AutoDisposeNotifier<List<AssetList>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

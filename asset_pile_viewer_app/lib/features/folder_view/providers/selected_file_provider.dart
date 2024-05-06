@@ -17,10 +17,6 @@ class SelectedFile extends _$SelectedFile {
     final sharedPreferences = ref.watch(sharedPreferencesProvider);
     final selectedFile = sharedPreferences.getString(_keySelectedFile) ?? '';
 
-    if (!selectedFile.startsWith(selectedFolder)) {
-      return '';
-    }
-
     return selectedFile;
   }
 

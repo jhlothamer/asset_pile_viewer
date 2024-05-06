@@ -7,9 +7,10 @@ Features include:
   * Previewing all supported assets under a selected folder (see supported file formats below)
   * Adding keywords to folders and files
   * Filter assets by file name and keywords
+  * Create lists and add files to them.  This is useful for collecting candidates for a project.  The files can also be copied to a folder for easy collection.
   * Light and dark mode
   * Supports Windows and Linux
-
+<br>
 <p align="center">
 <img src="readme_images/screenshot.png" />
 </p>
@@ -28,14 +29,12 @@ There are issues with full support for the following file formats.
 
 ## Feature Road Map
 
-  * Lists - Create lists and add asset files to them.  Useful for collecting  candidates for a project.
   * Notes - Adding a note to a file.
   * Rating - Add a rating to a file or folder.  Allow filtering on rating.
   * List view - Support a list view and allow toggling between grid and list views.
-  * Sorting - Allow user to change sorting.
 
 ## Features, Issues
-Found a bug or want a new feature?  Please create a new issue [on the Issues tab](https://github.com/jhlothamer/asset_pile_viewer/issues).
+Found a bug, want a new feature or just want a change?  Please create a new issue [on the Issues tab](https://github.com/jhlothamer/asset_pile_viewer/issues).
 
 
 ## Support

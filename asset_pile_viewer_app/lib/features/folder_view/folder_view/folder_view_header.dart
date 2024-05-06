@@ -1,4 +1,6 @@
 import 'package:assetPileViewer/features/folder_view/providers/asset_root_folder_provider.dart';
+import 'package:assetPileViewer/features/folder_view/providers/most_recent_asset_folders_provider.dart';
+import 'package:assetPileViewer/features/folder_view/providers/selected_file_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/selected_folder_provider.dart';
 import 'package:assetPileViewer/features/folder_view/providers/show_hidden_folders_provider.dart';
 import 'package:file_selector/file_selector.dart';
@@ -13,6 +15,7 @@ class FolderViewHeader extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final rootFolder = ref.watch(assetRootFolderProvider);
     final showHidden = ref.watch(showHiddenFoldersProvider);
+    final mostRecentAssetFolders = ref.watch(mostRecentAssetFoldersProvider);
 
     return Padding(
       padding: const EdgeInsets.only(left: 8, right: 8, top: 8),
@@ -49,9 +52,27 @@ class FolderViewHeader extends ConsumerWidget {
                       ref
                           .read(selectedFolderProvider.notifier)
                           .update(directoryPath);
+                      ref.read(selectedFileProvider.notifier).clear();
                       onAssetRootFolderSelected(directoryPath);
                     },
                   ),
+                  SubmenuButton(menuChildren: [
+                    ...mostRecentAssetFolders.map(
+                      (folder) => MenuItemButton(
+                        child: Text(folder),
+                        onPressed: () {
+                          ref
+                              .read(assetRootFolderProvider.notifier)
+                              .update(folder);
+                          ref
+                              .read(selectedFolderProvider.notifier)
+                              .update(folder);
+                          ref.read(selectedFileProvider.notifier).clear();
+                          onAssetRootFolderSelected(folder);
+                        },
+                      ),
+                    ),
+                  ], child: const Text('Recent Folders')),
                   MenuItemButton(
                     child: Text(showHidden ? 'Hide Hidden' : 'Show Hidden'),
                     onPressed: () {

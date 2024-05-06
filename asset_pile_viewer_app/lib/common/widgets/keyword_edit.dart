@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class KeywordEditorController extends ChangeNotifier {
   final List<String> keywords;
-  KeywordEditorController(this.keywords);
+  final List<String>? acceptableKeywords;
+  KeywordEditorController(this.keywords, [this.acceptableKeywords]);
 
   List<String> add(String keywordsString) {
     var changed = false;
@@ -13,6 +14,11 @@ class KeywordEditorController extends ChangeNotifier {
         .map((k) => k.trim())
         .where((k) => k.isNotEmpty);
     for (final keyword in enteredKeywords) {
+      if (acceptableKeywords != null &&
+          !acceptableKeywords!.contains(keyword.toLowerCase())) {
+        continue;
+      }
+
       if (!keywords.contains(keyword)) {
         keywords.add(keyword);
         newKeywords.add(keyword);
@@ -40,6 +46,7 @@ class KeywordEdit extends StatefulWidget {
   final void Function(List<String>)? onKeywordsAdded;
   final bool grabFocus;
   final TextEditingController? textEditingController;
+  final String noun;
   const KeywordEdit({
     super.key,
     required this.controller,
@@ -47,6 +54,7 @@ class KeywordEdit extends StatefulWidget {
     this.onKeywordsAdded,
     this.grabFocus = false,
     this.textEditingController,
+    this.noun = 'keyword',
   });
 
   @override
@@ -100,14 +108,14 @@ class _KeywordEditState extends State<KeywordEdit> {
         TextField(
           controller: _textController,
           focusNode: _focusNode,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             isDense: true,
-            labelText: 'Add new keywords (comma separated)',
-            labelStyle: TextStyle(
+            labelText: 'Add new ${widget.noun}s (comma separated)',
+            labelStyle: const TextStyle(
               color: Colors.grey,
               fontStyle: FontStyle.italic,
             ),
-            border: OutlineInputBorder(),
+            border: const OutlineInputBorder(),
           ),
           onSubmitted: (keywords) {
             final newKeywords = widget.controller.add(keywords);
@@ -129,7 +137,7 @@ class _KeywordEditState extends State<KeywordEdit> {
     if (keywords.isEmpty) {
       return [
         Text(
-          'No keywords',
+          'No ${widget.noun}s',
           style: TextStyle(
             fontStyle: FontStyle.italic,
             color: Theme.of(context).disabledColor,
@@ -147,7 +155,7 @@ class _KeywordEditState extends State<KeywordEdit> {
           padding: EdgeInsets.zero,
           backgroundColor: Theme.of(context).focusColor,
           side: BorderSide.none,
-          deleteButtonTooltipMessage: 'Remove keyword',
+          deleteButtonTooltipMessage: 'Remove ${widget.noun}',
           label: Text(keyword),
           onDeleted: () {
             widget.controller.remove(keyword);

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:assetPileViewer/common/providers/shared_prefs_provider.dart';
+import 'package:assetPileViewer/features/folder_view/providers/most_recent_asset_folders_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'asset_root_folder_provider.g.dart';
@@ -25,6 +26,9 @@ class AssetRootFolder extends _$AssetRootFolder {
   void update(String newAssetRootFolder) {
     final sharedPreferences = ref.watch(sharedPreferencesProvider);
     sharedPreferences.setString(keyAssetRootFolder, newAssetRootFolder);
+    ref
+        .read(mostRecentAssetFoldersProvider.notifier)
+        .update(newAssetRootFolder);
     ref.invalidateSelf();
   }
 }

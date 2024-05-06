@@ -20,6 +20,7 @@ mixin _$AssetFile {
   String get path => throw _privateConstructorUsedError;
   bool get hidden => throw _privateConstructorUsedError;
   List<Keyword> get keywords => throw _privateConstructorUsedError;
+  List<AssetList> get lists => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $AssetFileCopyWith<AssetFile> get copyWith =>
@@ -31,7 +32,12 @@ abstract class $AssetFileCopyWith<$Res> {
   factory $AssetFileCopyWith(AssetFile value, $Res Function(AssetFile) then) =
       _$AssetFileCopyWithImpl<$Res, AssetFile>;
   @useResult
-  $Res call({int id, String path, bool hidden, List<Keyword> keywords});
+  $Res call(
+      {int id,
+      String path,
+      bool hidden,
+      List<Keyword> keywords,
+      List<AssetList> lists});
 }
 
 /// @nodoc
@@ -51,6 +57,7 @@ class _$AssetFileCopyWithImpl<$Res, $Val extends AssetFile>
     Object? path = null,
     Object? hidden = null,
     Object? keywords = null,
+    Object? lists = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -69,6 +76,10 @@ class _$AssetFileCopyWithImpl<$Res, $Val extends AssetFile>
           ? _value.keywords
           : keywords // ignore: cast_nullable_to_non_nullable
               as List<Keyword>,
+      lists: null == lists
+          ? _value.lists
+          : lists // ignore: cast_nullable_to_non_nullable
+              as List<AssetList>,
     ) as $Val);
   }
 }
@@ -81,7 +92,12 @@ abstract class _$$AssetFileImplCopyWith<$Res>
       __$$AssetFileImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, String path, bool hidden, List<Keyword> keywords});
+  $Res call(
+      {int id,
+      String path,
+      bool hidden,
+      List<Keyword> keywords,
+      List<AssetList> lists});
 }
 
 /// @nodoc
@@ -99,6 +115,7 @@ class __$$AssetFileImplCopyWithImpl<$Res>
     Object? path = null,
     Object? hidden = null,
     Object? keywords = null,
+    Object? lists = null,
   }) {
     return _then(_$AssetFileImpl(
       id: null == id
@@ -117,6 +134,10 @@ class __$$AssetFileImplCopyWithImpl<$Res>
           ? _value._keywords
           : keywords // ignore: cast_nullable_to_non_nullable
               as List<Keyword>,
+      lists: null == lists
+          ? _value._lists
+          : lists // ignore: cast_nullable_to_non_nullable
+              as List<AssetList>,
     ));
   }
 }
@@ -128,8 +149,10 @@ class _$AssetFileImpl implements _AssetFile {
       {required this.id,
       required this.path,
       required this.hidden,
-      final List<Keyword> keywords = const []})
-      : _keywords = keywords;
+      final List<Keyword> keywords = const [],
+      final List<AssetList> lists = const []})
+      : _keywords = keywords,
+        _lists = lists;
 
   @override
   final int id;
@@ -146,9 +169,18 @@ class _$AssetFileImpl implements _AssetFile {
     return EqualUnmodifiableListView(_keywords);
   }
 
+  final List<AssetList> _lists;
+  @override
+  @JsonKey()
+  List<AssetList> get lists {
+    if (_lists is EqualUnmodifiableListView) return _lists;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_lists);
+  }
+
   @override
   String toString() {
-    return 'AssetFile(id: $id, path: $path, hidden: $hidden, keywords: $keywords)';
+    return 'AssetFile(id: $id, path: $path, hidden: $hidden, keywords: $keywords, lists: $lists)';
   }
 
   @override
@@ -159,12 +191,18 @@ class _$AssetFileImpl implements _AssetFile {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.path, path) || other.path == path) &&
             (identical(other.hidden, hidden) || other.hidden == hidden) &&
-            const DeepCollectionEquality().equals(other._keywords, _keywords));
+            const DeepCollectionEquality().equals(other._keywords, _keywords) &&
+            const DeepCollectionEquality().equals(other._lists, _lists));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, id, path, hidden,
-      const DeepCollectionEquality().hash(_keywords));
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      path,
+      hidden,
+      const DeepCollectionEquality().hash(_keywords),
+      const DeepCollectionEquality().hash(_lists));
 
   @JsonKey(ignore: true)
   @override
@@ -178,7 +216,8 @@ abstract class _AssetFile implements AssetFile {
       {required final int id,
       required final String path,
       required final bool hidden,
-      final List<Keyword> keywords}) = _$AssetFileImpl;
+      final List<Keyword> keywords,
+      final List<AssetList> lists}) = _$AssetFileImpl;
 
   @override
   int get id;
@@ -188,6 +227,8 @@ abstract class _AssetFile implements AssetFile {
   bool get hidden;
   @override
   List<Keyword> get keywords;
+  @override
+  List<AssetList> get lists;
   @override
   @JsonKey(ignore: true)
   _$$AssetFileImplCopyWith<_$AssetFileImpl> get copyWith =>

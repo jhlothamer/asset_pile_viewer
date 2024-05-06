@@ -20,8 +20,8 @@ class _SearchKeywordEditState extends ConsumerState<SearchKeywordEdit> {
   @override
   void dispose() {
     _debounce.close();
-    super.dispose();
     _controller.dispose();
+    super.dispose();
   }
 
   @override

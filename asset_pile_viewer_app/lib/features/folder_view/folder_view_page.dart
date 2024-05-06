@@ -1,5 +1,5 @@
 import 'package:assetPileViewer/common/widgets/audioplayer/audioplayer_controls.dart';
-import 'package:assetPileViewer/features/about/about.dart';
+import 'package:assetPileViewer/features/folder_view/asset_list_view/asset_lists_view.dart';
 import 'package:assetPileViewer/features/folder_view/file_filter/file_filter.dart';
 import 'package:assetPileViewer/features/folder_view/file_grid_view/file_grid_view.dart';
 import 'package:assetPileViewer/features/folder_view/file_details/file_detail_display.dart';
@@ -43,7 +43,46 @@ class _FolderViewPageState extends State<FolderViewPage> {
             ),
             viewMode: SplitViewMode.Horizontal,
             children: [
-              const FolderView(),
+              //const FolderView(),
+              DefaultTabController(
+                length: 2,
+                animationDuration: Duration.zero,
+                child: Column(
+                  children: [
+                    TabBar(
+                      onTap: (index) {},
+                      tabs: const [
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              Icon(Icons.folder),
+                              Text('Folders'),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              Icon(Icons.list),
+                              Text('Lists'),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Expanded(
+                      child: TabBarView(
+                        children: [
+                          FolderView(),
+                          AssetListsView(),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               Flex(
                 direction: Axis.vertical,
                 children: [
